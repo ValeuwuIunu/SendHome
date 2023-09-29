@@ -1,6 +1,10 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:sendhome/global/global.dart';
+import 'LoginScreen.dart';
 import 'registro_conductor.dart';
 
 
@@ -19,6 +23,34 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final _passwordCUserController = TextEditingController();
 
   bool _passwordVisible =false;
+
+  void _sumit()async{
+    if(_formKey.currentState!.validate()){
+      await firebaseAuth.createUserWithEmailAndPassword(
+          email: _correoController.text.trim(),
+          password: _passwordUserController.text.trim(),
+      ).then((value) async{
+        currentUser=value.user;
+        if(currentUser !=null){
+         Map userMap = {
+           "id":currentUser!.uid,
+           "name":_nombreUserController.text.trim(),
+           "email":_correoController.text.trim(),
+           "phone":_numUserController.text.trim(),
+         };
+         DatabaseReference userRef = FirebaseDatabase.instance.ref().child("users");
+         userRef.child(currentUser!.uid).set(userMap);
+        }
+        await Fluttertoast.showToast(msg: "Successfully Registered");
+        Navigator.push(context, MaterialPageRoute(builder: (c)=>LoginScreen()));
+      }).catchError((errorMesage){
+        Fluttertoast.showToast(msg: "Error ocurred: \n $errorMesage");
+      });
+    }
+    else{
+      Fluttertoast.showToast(msg: "Not all field are valid");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -272,7 +304,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           child: ElevatedButton(
                             onPressed: () {
                               // Navegar a la siguiente pantalla o realizar otras acciones
-                              print(_numUserController);
+                              _sumit();
                               /*Navigator.push(
                                 context,
                                 MaterialPageRoute(

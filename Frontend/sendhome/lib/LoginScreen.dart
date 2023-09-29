@@ -1,17 +1,13 @@
+import 'package:email_validator/email_validator.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'Mapa_usuario.dart';
+import 'global/global.dart';
 import 'registro_usuario.dart';
 import 'seleccionElectrodomestico.dart';
 
-class MyAppLogin extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: LoginScreen(),
-      theme: ThemeData(useMaterial3: true),
-    );
-  }
-}
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -22,10 +18,25 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _correoController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _passwordVisible =false;
 
-  void _login() {
-    String enteredUsername = _correoController.text;
-    String enteredPassword = _passwordController.text;
+  void _sumit()async{
+    if(_formKey.currentState!.validate()){
+      await firebaseAuth.createUserWithEmailAndPassword(
+        email: _correoController.text.trim(),
+        password: _passwordController.text.trim(),
+      ).then((value) async{
+        currentUser=value.user;
+        await Fluttertoast.showToast(msg: "Successfully Logged In");
+        Navigator.push(context, MaterialPageRoute(builder: (c)=>MyMapApp()));
+      }).catchError((errorMesage){
+        Fluttertoast.showToast(msg: "Error ocurred: \n $errorMesage");
+      });
+    }
+    else{
+      Fluttertoast.showToast(msg: "Not all field are valid");
+    }
   }
 
   @override
@@ -75,50 +86,86 @@ class _LoginScreenState extends State<LoginScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         Expanded(child:
-                        TextField(
-                            controller: _correoController,
-                            decoration: InputDecoration(
-                              hintText: 'Correo',
-                              labelStyle: TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                              ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors
-                                        .blue), // Cambia el color del borde enfocado si es necesario
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors
-                                        .black54), // Cambia el color del borde cuando no está enfocado si es necesario
-                              ),
+                        TextFormField(
+                          controller: _correoController,
+                          decoration: InputDecoration(
+                            hintText: 'Correo electrónico',
+                            labelStyle: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
                             ),
-                            cursorColor: Colors.blue),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors
+                                      .blue), // Cambia el color del borde enfocado si es necesario
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black54)),
+                            prefixIcon: Icon(Icons.mail,color: Colors.deepPurpleAccent),
+                          ),
+                          cursorColor: Colors.blue,
+                          autovalidateMode:AutovalidateMode.onUserInteraction,
+                          validator: (value) {
+                            if(value==null || value.isEmpty){
+                              return "El Correo no puede estar vacio";
+                            }
+                            if(EmailValidator.validate(value)==true){
+                              return null;
+                            }
+                            if(value.length <2){
+                              return "Porfavor ingrese un Correo valido";
+                            }
+                            if(value.length >99){
+                              return "El Correo no puede tener mas de 100 caracteres ";
+                            }
+                          },
+                        ),
                   ),
-
-                        TextField(
-                            controller: _passwordController,
-                            keyboardType: TextInputType.number,
-                            obscureText: true,
-                            decoration: const InputDecoration(
-                              hintText: 'Contraseña ',
-                              labelStyle: TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                              ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors
-                                        .blue), // Cambia el color del borde enfocado si es necesario
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors
-                                        .black54), // Cambia el color del borde cuando no está enfocado si es necesario
-                              ),
+                        TextFormField(
+                          obscureText:!_passwordVisible,
+                          decoration: InputDecoration(
+                            hintText: 'Contraseña',
+                            labelStyle: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
                             ),
-                            cursorColor: Colors.blue),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors
+                                      .blue), // Cambia el color del borde enfocado si es necesario
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black54)),
+                            prefixIcon: Icon(Icons.password,color: Colors.deepPurpleAccent),
+                            suffixIcon: IconButton(
+                              icon :Icon(
+                                _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                                color: Colors.deepPurpleAccent,
+                              ),
+                              onPressed: (){
+                                setState(() {
+                                  _passwordVisible=!_passwordVisible;
+                                });
+                              },
+                            ),
+                          ),
+                          cursorColor: Colors.blue,
+                          autovalidateMode:AutovalidateMode.onUserInteraction,
+                          validator: (value) {
+                            if(value==null || value.isEmpty){
+                              return "El Clave no puede estar vacio";
+                            }
+                            if(value.length <2){
+                              return "Porfavor ingrese una clave valida";
+                            }
+                            if(value.length >99){
+                              return "La Clave no puede tener mas de 100 caracteres ";
+                            }
+                          },
+                          onChanged: (value)=>setState(() {
+                            _passwordController.text=value;
+                          }),
+                        ),
                         SizedBox(height: 45),
                         Align(
                           alignment: Alignment.bottomCenter,
@@ -147,6 +194,42 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         ),
+                        SizedBox(height: 20,),
+
+                        GestureDetector(
+                          onTap: (){},
+                          child:Center(
+                            child: Text(
+                              'Forgot password',
+                              style: TextStyle(
+                                color: Colors.deepPurpleAccent,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Tienes una cuenta?",
+                              style: TextStyle(
+                                color:Colors.black45,
+                                fontSize: 15,
+                              ),
+                            ),
+                            SizedBox(height: 20,),
+                            GestureDetector(
+                              onTap: (){},
+                              child: Text(
+                                'sing In',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.deepPurpleAccent,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
 
                       ],
                     ),
