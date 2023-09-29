@@ -1,26 +1,9 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'registro_conductor.dart';
 
-class User {
-  String numUser;
-  String nombreUser;
-  String correo;
-  String passwordUser;
-  String passworCdUser;
 
-  User(this.numUser, this.nombreUser, this.correo, this.passwordUser,
-      this.passworCdUser);
-}
-
-class MyAppregistrousuario extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      home: RegistrationPage(),
-    );
-  }
-}
 
 class RegistrationPage extends StatefulWidget {
   @override
@@ -34,6 +17,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final _correoController = TextEditingController();
   final _passwordUserController = TextEditingController();
   final _passwordCUserController = TextEditingController();
+
+  bool _passwordVisible =false;
 
   @override
   Widget build(BuildContext context) {
@@ -98,35 +83,26 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        TextFormField(
-                          controller: _numUserController,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            hintText: 'Número telefónico',
-                            labelStyle: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors
-                                      .blue), // Cambia el color del borde enfocado si es necesario
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors
-                                      .black54), // Cambia el color del borde cuando no está enfocado si es necesario
+                        IntlPhoneField(
+                          showCountryFlag: false,
+                          dropdownIcon: Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.deepPurpleAccent,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: "Número",
+                            hintStyle: TextStyle(
+                              color: Colors.grey,
                             ),
                           ),
-                          cursorColor: Colors.blue,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor, ingresa una cédula válida.';
-                            }
-                            return null;
+                          initialCountryCode: 'CC',
+                          onChanged: (value) {
+                            setState(() {
+                              _numUserController.text = value.completeNumber;
+                            });
                           },
                         ),
-                        SizedBox(height: 20),
+                        SizedBox(height: 1),
                         TextFormField(
                           controller: _nombreUserController,
                           decoration: InputDecoration(
@@ -142,13 +118,21 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             ),
                             enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.black54)),
+                            prefixIcon: Icon(Icons.person,color: Colors.deepPurpleAccent),
+
                           ),
                           cursorColor: Colors.blue,
+                          autovalidateMode:AutovalidateMode.onUserInteraction,
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor, ingresa un nombre válido.';
+                            if(value==null || value.isEmpty){
+                              return "El nombre no puede estar vacio";
                             }
-                            return null;
+                            if(value.length <2){
+                              return "Porfavor ingrese un nombre valido";
+                            }
+                            if(value.length >49){
+                              return "El nombre no puede tener mas de 50 caracteres ";
+                            }
                           },
                         ),
                         SizedBox(height: 20),
@@ -167,19 +151,28 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             ),
                             enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.black54)),
+                            prefixIcon: Icon(Icons.mail,color: Colors.deepPurpleAccent),
                           ),
                           cursorColor: Colors.blue,
+                          autovalidateMode:AutovalidateMode.onUserInteraction,
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor, ingresa un apellido válido.';
+                            if(value==null || value.isEmpty){
+                              return "El Correo no puede estar vacio";
                             }
-                            return null;
+                            if(EmailValidator.validate(value)==true){
+                              return null;
+                            }
+                            if(value.length <2){
+                              return "Porfavor ingrese un Correo valido";
+                            }
+                            if(value.length >99){
+                              return "El Correo no puede tener mas de 100 caracteres ";
+                            }
                           },
                         ),
                         SizedBox(height: 20),
                         TextFormField(
-                          controller: _passwordUserController,
-                          obscureText: true,
+                          obscureText:!_passwordVisible,
                           decoration: InputDecoration(
                             hintText: 'Contraseña',
                             labelStyle: TextStyle(
@@ -193,21 +186,41 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             ),
                             enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.black54)),
+                            prefixIcon: Icon(Icons.password,color: Colors.deepPurpleAccent),
+                            suffixIcon: IconButton(
+                              icon :Icon(
+                              _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                              color: Colors.deepPurpleAccent,
+                            ),
+                              onPressed: (){
+                                setState(() {
+                                  _passwordVisible=!_passwordVisible;
+                                });
+                              },
+                            ),
                           ),
                           cursorColor: Colors.blue,
+                          autovalidateMode:AutovalidateMode.onUserInteraction,
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor, ingresa una contraseña.';
+                            if(value==null || value.isEmpty){
+                              return "El Clave no puede estar vacio";
                             }
-                            return null;
+                            if(value.length <2){
+                              return "Porfavor ingrese una clave valida";
+                            }
+                            if(value.length >99){
+                              return "La Clave no puede tener mas de 100 caracteres ";
+                            }
                           },
+                          onChanged: (value)=>setState(() {
+                            _passwordUserController.text=value;
+                          }),
                         ),
                         SizedBox(height: 20.0),
                         TextFormField(
-                          controller: _passwordCUserController,
-                          obscureText: true,
+                          obscureText:!_passwordVisible,
                           decoration: InputDecoration(
-                            hintText: 'Confirmar contraseña',
+                            hintText: 'Confirmar Contraseña',
                             labelStyle: TextStyle(
                               fontSize: 20,
                               color: Colors.black,
@@ -219,14 +232,39 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             ),
                             enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.black54)),
+                            prefixIcon: Icon(Icons.password,color: Colors.deepPurpleAccent),
+                            suffixIcon: IconButton(
+                              icon :Icon(
+                                _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                                color: Colors.deepPurpleAccent,
+                              ),
+                              onPressed: (){
+                                setState(() {
+                                  _passwordVisible=!_passwordVisible;
+                                });
+                              },
+                            ),
                           ),
                           cursorColor: Colors.blue,
+                          autovalidateMode:AutovalidateMode.onUserInteraction,
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor, confirma la contraseña.';
+                            if(value==null || value.isEmpty){
+                              return "El Clave no puede estar vacio";
                             }
-                            return null;
+                            if(value !=_passwordUserController.text){
+                              return "El Pasword no coincide";
+                            }
+
+                            if(value.length <2){
+                              return "Porfavor ingrese una clave valida";
+                            }
+                            if(value.length >99){
+                              return "La Clave no puede tener mas de 100 caracteres ";
+                            }
                           },
+                          onChanged: (value)=>setState(() {
+                            _passwordCUserController.text=value;
+                          }),
                         ),
                         SizedBox(height: 70.0),
                         Align(
@@ -234,12 +272,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           child: ElevatedButton(
                             onPressed: () {
                               // Navegar a la siguiente pantalla o realizar otras acciones
-                              Navigator.push(
+                              print(_numUserController);
+                              /*Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        MyAppregistrousuario()),
-                              );
+                                        RegistrationPage()),
+                              );*/
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Color.fromRGBO(47, 8, 73, 0.5),
@@ -258,6 +297,43 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             ),
                           ),
                         ),
+                        SizedBox(height: 20,),
+
+                        GestureDetector(
+                          onTap: (){},
+                          child:Center(
+                          child: Text(
+                            'Forgot password',
+                            style: TextStyle(
+                              color: Colors.deepPurpleAccent,
+                            ),
+                          ),
+                        ),
+                  ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Tienes una cuenta?",
+                              style: TextStyle(
+                                color:Colors.black45,
+                                fontSize: 15,
+                              ),
+                            ),
+                            SizedBox(height: 20,),
+                            GestureDetector(
+                              onTap: (){},
+                                child: Text(
+                                  'sing In',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.deepPurpleAccent,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        )
+
                       ],
                     ),
                   ),
@@ -271,30 +347,4 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 }
 
-class ConfirmationUserPage extends StatelessWidget {
-  final User user;
 
-  ConfirmationUserPage({required this.user});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Confirmación de Registro como usuario'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Numero telefónico: ${user.numUser}'),
-            Text('Nombre completo: ${user.nombreUser}'),
-            Text('Correo electrónico: ${user.correo}'),
-            Text('Contraseña: ${user.passwordUser}'),
-            Text('Confirmar contraseña: ${user.passworCdUser}')
-          ],
-        ),
-      ),
-    );
-  }
-}

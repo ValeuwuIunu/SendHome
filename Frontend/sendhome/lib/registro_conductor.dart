@@ -52,7 +52,7 @@ class _RegistrationDriverPageState extends State<RegistrationDriverPage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MyAppregistrousuario()),
+              MaterialPageRoute(builder: (context) => RegistrationPage()),
             );
           },
         ),
