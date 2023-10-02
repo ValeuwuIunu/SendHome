@@ -1,7 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:sendhome/splashScreen/splash_screen.dart';
 
-import 'LoginScreen.dart';
+import 'Screens/LoginScreen.dart';
 
 void main() async {
   runApp(MyApp());
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
         colorScheme: const ColorScheme.light(primary: Colors.green),
         appBarTheme: const AppBarTheme(backgroundColor: Colors.transparent),
       ),
-      home: const LoginScreen(),
+      home: const SplashScreen(),
     );
   }
 }

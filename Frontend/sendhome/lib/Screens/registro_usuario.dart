@@ -10,6 +10,8 @@ import 'registro_conductor.dart';
 
 
 class RegistrationPage extends StatefulWidget {
+
+  const RegistrationPage({Key? key}) : super(key: key);
   @override
   _RegistrationPageState createState() => _RegistrationPageState();
 }
@@ -305,6 +307,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             onPressed: () {
                               // Navegar a la siguiente pantalla o realizar otras acciones
                               _sumit();
+                              print(_formKey.currentState);
                               /*Navigator.push(
                                 context,
                                 MaterialPageRoute(

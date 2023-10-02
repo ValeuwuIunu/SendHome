@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'LoginScreen.dart';
 import 'Mapa_conductor.dart';
 import 'registro_licencia.dart';
 
