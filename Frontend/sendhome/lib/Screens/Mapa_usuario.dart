@@ -5,8 +5,13 @@ import 'package:geocoder2/geocoder2.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc ;
+import 'package:provider/provider.dart';
 import 'package:sendhome/Assistants/assistant_methods.dart';
+import 'package:sendhome/global/global.dart';
 import 'package:sendhome/global/map_key.dart';
+import 'package:sendhome/infoHadler/app_info.dart';
+
+import '../models/directions.dart';
 
 
 class MyMapScreen extends StatefulWidget {
@@ -39,7 +44,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
   var geoLocation = Geolocator();
 
   LocationPermission? _locationPermission;
-  double bottomPaddingOffMap =0;
+  double bottomPaddingOffMap = 150.0;
 
   List<LatLng> plineCoordinatedList = [];
   Set<Polyline> polylineSet = {};
@@ -66,6 +71,12 @@ class _MyMapScreenState extends State<MyMapScreen> {
     String humanRedableAdress = await AssistanMethods.searchAddressForGeographicCoordinate(userCurrentPosition!, context);
     print("This is our addres = " + humanRedableAdress );
 
+    userName=userModelCurrentInfo!.nombre!;
+    userEmail=userModelCurrentInfo!.correo!;
+
+    //initializeGeoFireListener();
+    //AssistanMethods.readTripsKeysForOnlinerUser(context);
+
   }
   getAddressFromLatLng()async{
     try{
@@ -75,8 +86,12 @@ class _MyMapScreenState extends State<MyMapScreen> {
           googleMapApiKey: mapKey
       );
       setState(() {
-        _addres = data.address;
-        print("addres ${_addres}");
+        Directions userPickUpAddress = Directions();
+        userPickUpAddress.locationLatitude = pickLocation!.latitude;
+        userPickUpAddress.locationLongitude = pickLocation!.longitude;
+        userPickUpAddress.locationName = data.address;
+        Provider.of<AppInfo>(context, listen: false).updatePickUpLocationAddress(userPickUpAddress);
+        //_addres = data.address;
       });
     }catch(exe){
       print(exe);
@@ -105,6 +120,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
         body: Stack(
           children: [
             GoogleMap(
+              padding: EdgeInsets.only(top: 40,bottom: bottomPaddingOffMap),
               mapType: MapType.normal,
               myLocationEnabled: true,
               zoomGesturesEnabled: true,
@@ -141,7 +157,108 @@ class _MyMapScreenState extends State<MyMapScreen> {
                 child: Image.asset('assets/position.png',height: 45,width: 45,),
               ),
             ),
+           //ui for searching location
             Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20, 50, 20, 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10)
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: Column(
+                              children: [
+                                Padding(
+                                    padding: EdgeInsets.all(5),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.location_on_outlined ,color : Colors.deepPurpleAccent),
+                                      SizedBox(width:10),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("From",
+                                            style: TextStyle(
+                                              color: Colors.deepPurpleAccent,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(Provider.of<AppInfo>(context).userPickUpLocation !=null
+                                              ? (Provider.of<AppInfo>(context).userPickUpLocation!.locationName!).substring(0,24)+"...":
+                                              "Not get adresss",
+                                            style: TextStyle(color: Colors.grey,fontSize: 14),
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 5,),
+                                Divider(
+                                  height: 1,
+                                  thickness: 2,
+                                  color: Colors.deepPurpleAccent,
+                                ),
+                                SizedBox(height: 5,),
+                                Padding(
+                                    padding: EdgeInsets.all(5),
+                                  child: GestureDetector(
+                                    onTap: (){
+
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.location_on_outlined ,color : Colors.deepPurpleAccent),
+                                        SizedBox(width:10),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text("To",
+                                              style: TextStyle(
+                                                color: Colors.deepPurpleAccent,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            /*Text(Provider.of<AppInfo>(context).userPickUpLocation !=null
+                                                ? (Provider.of<AppInfo>(context).userDropOffLocation!.locationName!).substring(0,24)+"...":
+                                            "where to?",
+                                              style: TextStyle(color: Colors.grey,fontSize: 14),
+                                            )*/
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            )
+           
+           
+           /* Positioned(
               top: 40,
               right: 20,
               left: 20,
@@ -151,11 +268,15 @@ class _MyMapScreenState extends State<MyMapScreen> {
                   color: Colors.white,
                 ),
                 padding: EdgeInsets.all(20),
-                child: Text(_addres ?? "Set your picuplocation",
+                child: Text(
+                  Provider.of<AppInfo>(context).userPickUpLocation !=null
+                      ? (Provider.of<AppInfo>(context).userPickUpLocation!.locationName!).substring(0,24)+"...":"Not get adresss",
                   overflow:TextOverflow.visible,softWrap:true,
                 ),
                 ),
-              ),
+              ),*/
+
+
           ],
         ),
       ),

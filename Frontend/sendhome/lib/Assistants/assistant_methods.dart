@@ -1,12 +1,14 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 import 'package:sendhome/Assistants/request_assistant.dart';
 import 'package:sendhome/global/global.dart';
 import 'package:sendhome/models/directions.dart';
 import 'package:sendhome/models/user_model.dart';
 
 import '../global/map_key.dart';
+import '../infoHadler/app_info.dart';
 
 class AssistanMethods{
   
@@ -40,7 +42,7 @@ class AssistanMethods{
       userPickUpAddress.locationName = humanReadableAddress;
 
       // Aquí puedes usar Provider para actualizar la ubicación de recogida si es necesario.
-      // Provider.of<AppInfo>(context, listen: false).updatePickUpLocationAddress(userPickUpAddress);
+      Provider.of<AppInfo>(context, listen: false).updatePickUpLocationAddress(userPickUpAddress);
     }else{
       print("Error");
     }
