@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoder2/geocoder2.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,6 +12,7 @@ import 'package:sendhome/Screens/search_place_screen.dart';
 import 'package:sendhome/global/global.dart';
 import 'package:sendhome/global/map_key.dart';
 import 'package:sendhome/infoHadler/app_info.dart';
+import 'package:sendhome/widgets/progres_dialog.dart';
 
 import '../models/directions.dart';
 
@@ -79,6 +81,119 @@ class _MyMapScreenState extends State<MyMapScreen> {
     //AssistanMethods.readTripsKeysForOnlinerUser(context);
 
   }
+
+  Future<void>drawPolyLineFromOriginToDestination() async{
+    var originPosition  = Provider.of<AppInfo>(context,listen: false).userPickUpLocation;
+    var destinationPosition  = Provider.of<AppInfo>(context,listen: false).userDropOffLocation;
+
+    var originLatLng =LatLng(originPosition!.locationLatitude!, originPosition.locationLongitude!);
+    var destinationLatLng =LatLng(destinationPosition!.locationLatitude!, destinationPosition.locationLongitude!);
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) =>ProgresDialog(message: "Please wait",)
+    );
+
+    var directionDetailsInfo = await AssistanMethods.obtainOriginToDestinationDirectionDetails(originLatLng, destinationLatLng);
+    setState(() {
+      tripdirectionDetailsInfo = directionDetailsInfo;
+    });
+
+    Navigator.pop(context);
+
+    PolylinePoints points = PolylinePoints();
+    List<PointLatLng> decodePolyLinePointsResultList = points.decodePolyline(directionDetailsInfo.e_points!);
+    
+    plineCoordinatedList.clear();
+    
+    if(decodePolyLinePointsResultList.isNotEmpty){
+      decodePolyLinePointsResultList.forEach((PointLatLng pointLatLng) {
+        plineCoordinatedList.add(LatLng(pointLatLng.latitude, pointLatLng.longitude));
+      });
+    }
+
+    polylineSet.clear();
+
+    setState(() {
+      Polyline polyline = Polyline(
+        color: Colors.deepPurpleAccent,
+        polylineId: PolylineId("PolylineId"),
+        jointType: JointType.round,
+        points: plineCoordinatedList,
+        startCap: Cap.roundCap,
+        endCap: Cap.roundCap,
+        geodesic: true,
+        width: 5
+      );
+
+      polylineSet.add(polyline);
+    });
+    LatLngBounds boundslatlang;
+    if(originLatLng.latitude >destinationLatLng.latitude && originLatLng.longitude>destinationLatLng.longitude){
+      boundslatlang=LatLngBounds(southwest: destinationLatLng, northeast: originLatLng);
+    }
+    else if(originLatLng.longitude >destinationLatLng.longitude){
+      boundslatlang = LatLngBounds(
+          southwest: LatLng(originLatLng.latitude,destinationLatLng.longitude),
+          northeast: LatLng(destinationLatLng.latitude,originLatLng.longitude),
+      );
+    }
+    else if(originLatLng.latitude>destinationLatLng.latitude){
+      boundslatlang = LatLngBounds(
+          southwest: LatLng(destinationLatLng.latitude,originLatLng.longitude),
+          northeast: LatLng(originLatLng.latitude,destinationLatLng.longitude),
+      );
+    }
+    else{
+      boundslatlang =LatLngBounds(southwest: originLatLng, northeast: destinationLatLng);
+    }
+    
+    newGoogleMapController!.animateCamera(CameraUpdate.newLatLngBounds(boundslatlang, 65));
+
+    Marker originMarker = Marker(
+        markerId: MarkerId("originID"),
+      infoWindow: InfoWindow(title: originPosition.locationName,snippet: "Origin"),
+      position: originLatLng,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+    );
+
+    Marker destinationMarker = Marker(
+      markerId: MarkerId("destinationID"),
+      infoWindow: InfoWindow(title: destinationPosition.locationName,snippet: "Destination"),
+      position: destinationLatLng,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    );
+
+    setState(() {
+      markerSet.add(originMarker);
+      markerSet.add(destinationMarker);
+    });
+
+    Circle originCircle = Circle(
+        circleId: CircleId("originID"),
+      fillColor: Colors.green,
+      radius: 12,
+      strokeWidth: 3,
+      strokeColor: Colors.white,
+      center: originLatLng
+    );
+
+    Circle destinationCircle = Circle(
+        circleId: CircleId("destinationID"),
+        fillColor: Colors.green,
+        radius: 12,
+        strokeWidth: 3,
+        strokeColor: Colors.white,
+        center: destinationLatLng
+    );
+    setState(() {
+      circleSet.add(originCircle);
+      circleSet.add(destinationCircle);
+    });
+
+
+  }
+  
   getAddressFromLatLng()async{
     try{
       GeoData data = await Geocoder2.getDataFromCoordinates(
@@ -228,6 +343,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                           openNavigationDrawer=false;
                                         });
                                       }
+                                      await drawPolyLineFromOriginToDestination();
                                     },
                                     child: Row(
                                       children: [

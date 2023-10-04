@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sendhome/Assistants/request_assistant.dart';
 import 'package:sendhome/global/global.dart';
@@ -9,6 +10,7 @@ import 'package:sendhome/models/user_model.dart';
 
 import '../global/map_key.dart';
 import '../infoHadler/app_info.dart';
+import '../models/direction_detail_info.dart';
 
 class AssistanMethods{
   
@@ -49,4 +51,32 @@ class AssistanMethods{
 
     return humanReadableAddress;
   }
+
+  static Future<DirectionDetailsInfo>obtainOriginToDestinationDirectionDetails(LatLng originPosition,LatLng destinationposition)async{
+
+    String urlOriginToDestinationDirectionDetails="https://maps.googleapis.com/maps/api/directions/json?origin=${originPosition.latitude},${originPosition.longitude}&destination=${destinationposition.latitude},${destinationposition.longitude}&key=$mapKey";
+
+
+    var responseDirectionApi = await RequestAssistant.receiveRequest(urlOriginToDestinationDirectionDetails);
+    //if(responseDirectionApi =="Error Ocurred.Failesd No Response"){
+      //return;
+    // }
+
+    DirectionDetailsInfo directionDetailsInfo = DirectionDetailsInfo();
+    print("Entre");
+    directionDetailsInfo.e_points = responseDirectionApi["routes"][0]["overview_polyline"]["points"];
+
+    directionDetailsInfo.distance_text=responseDirectionApi["routes"][0]["legs"][0]["distance"]["text"];
+    directionDetailsInfo.distance_value=responseDirectionApi["routes"][0]["legs"][0]["distance"]["value"];
+
+    directionDetailsInfo.duration_text=responseDirectionApi["routes"][0]["legs"][0]["duration"]["text"];
+    directionDetailsInfo.duration_value=responseDirectionApi["routes"][0]["legs"][0]["duration"]["value"];
+
+
+    return directionDetailsInfo;
+
+  }
+
+
+
 }
