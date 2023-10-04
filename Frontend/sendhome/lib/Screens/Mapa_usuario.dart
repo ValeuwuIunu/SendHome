@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc ;
 import 'package:provider/provider.dart';
 import 'package:sendhome/Assistants/assistant_methods.dart';
+import 'package:sendhome/Screens/search_place_screen.dart';
 import 'package:sendhome/global/global.dart';
 import 'package:sendhome/global/map_key.dart';
 import 'package:sendhome/infoHadler/app_info.dart';
@@ -44,7 +45,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
   var geoLocation = Geolocator();
 
   LocationPermission? _locationPermission;
-  double bottomPaddingOffMap = 150.0;
+  double bottomPaddingOffMap = 50;
 
   List<LatLng> plineCoordinatedList = [];
   Set<Polyline> polylineSet = {};
@@ -218,8 +219,15 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                 Padding(
                                     padding: EdgeInsets.all(5),
                                   child: GestureDetector(
-                                    onTap: (){
+                                    onTap: () async{
+                                      //go to search place screen
+                                      var responseFromSearchScreen = await Navigator.push(context, MaterialPageRoute(builder: (c)=>SearchPlaceScreen()));
 
+                                      if(responseFromSearchScreen == "obtainDropoff"){
+                                        setState(() {
+                                          openNavigationDrawer=false;
+                                        });
+                                      }
                                     },
                                     child: Row(
                                       children: [
@@ -235,11 +243,11 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            /*Text(Provider.of<AppInfo>(context).userPickUpLocation !=null
-                                                ? (Provider.of<AppInfo>(context).userDropOffLocation!.locationName!).substring(0,24)+"...":
-                                            "where to?",
+                                            Text(Provider.of<AppInfo>(context).userDropOffLocation !=null
+                                                ?Provider.of<AppInfo>(context).userDropOffLocation!.locationName!
+                                            :"where to?",
                                               style: TextStyle(color: Colors.grey,fontSize: 14),
-                                            )*/
+                                            )
                                           ],
                                         ),
                                       ],
