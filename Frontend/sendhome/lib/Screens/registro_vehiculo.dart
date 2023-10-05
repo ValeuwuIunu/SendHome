@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Mapa_conductor.dart';
+
 import 'registro_licencia.dart';
 
 class User {
@@ -269,12 +269,12 @@ class _RegistrationVehiculoPageState extends State<RegistrationVehiculoPage> {
                                 ),
                                 onPressed: () {
                                   // Navegar a la siguiente pantalla o realizar otras acciones
-                                  Navigator.push(
+                                 /* Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             MyMapConductorApp()),
-                                  );
+                                  );*/
                                 },
                                 child: const Text(
                                   'Registrarse',

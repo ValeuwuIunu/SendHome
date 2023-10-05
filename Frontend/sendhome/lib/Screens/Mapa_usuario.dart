@@ -8,6 +8,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc ;
 import 'package:provider/provider.dart';
 import 'package:sendhome/Assistants/assistant_methods.dart';
+import 'package:sendhome/Screens/drawer_Screen.dart';
+import 'package:sendhome/Screens/precise_pickup_location.dart';
 import 'package:sendhome/Screens/search_place_screen.dart';
 import 'package:sendhome/global/global.dart';
 import 'package:sendhome/global/map_key.dart';
@@ -28,7 +30,8 @@ class _MyMapScreenState extends State<MyMapScreen> {
   LatLng? pickLocation;
   loc.Location location =loc.Location();
   String? _addres;
-  final Completer<GoogleMapController> _controllerGoogleMap = Completer<GoogleMapController>();
+
+  final Completer<GoogleMapController> _controllerGoogleMap = Completer();
   GoogleMapController? newGoogleMapController;
 
   static const CameraPosition _kGooglePlex = CameraPosition(
@@ -194,7 +197,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
   }
   
-  getAddressFromLatLng()async{
+  /*getAddressFromLatLng()async{
     try{
       GeoData data = await Geocoder2.getDataFromCoordinates(
           latitude: pickLocation!.latitude,
@@ -212,7 +215,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
     }catch(exe){
       print(exe);
     }
-  }
+  }*/
 
   checkIfLocationPermissonAllowed()async {
     _locationPermission = await Geolocator.requestPermission();
@@ -233,6 +236,8 @@ class _MyMapScreenState extends State<MyMapScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        key:_scaffoldstate,
+        drawer: DrawerScreen(),
         body: Stack(
           children: [
             GoogleMap(
@@ -255,7 +260,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
                 locateUserPosition();
               },
-              onCameraMove: (CameraPosition? position){
+             /* onCameraMove: (CameraPosition? position){
                 if(pickLocation !=position!.target){
                   setState(() {
                     pickLocation=position.target;
@@ -264,15 +269,37 @@ class _MyMapScreenState extends State<MyMapScreen> {
               },
               onCameraIdle: (){
                 getAddressFromLatLng();
-;              },
+;              },*/
             ),
-            Align(
+            /*Align(
               alignment: Alignment.center,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 35.0),
                 child: Image.asset('assets/position.png',height: 45,width: 45,),
               ),
+            ),*/
+
+
+            //custom Hamburger button for drawer
+            Positioned(
+              top: 50,
+              left: 20,
+              child: Container(
+                child: GestureDetector(
+                  onTap: (){
+                    _scaffoldstate.currentState!.openDrawer();
+                  },
+                  child:CircleAvatar(
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.menu,
+                      color: Colors.deepPurpleAccent ,
+                    ),
+                  ) ,
+                ),
+              ),
             ),
+
            //ui for searching location
             Positioned(
               bottom: 0,
@@ -372,7 +399,57 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                 )
                               ],
                             ),
+                          ),
+
+                          SizedBox(height: 5,),
+                          
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                  onPressed: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (c)=>PrecisePickUpScreen()));
+                                  },
+                                  child: Text(
+                                    "ChangePick Up",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.deepPurpleAccent,
+                                    textStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    )
+
+                                  ),
+                              ),
+
+                              SizedBox(width: 10,),
+
+                              ElevatedButton(
+                                onPressed: (){
+
+                                },
+                                child: Text(
+                                  "Request a ride",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.deepPurpleAccent,
+                                    textStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    )
+
+                                ),
+                              ),
+                            ],
                           )
+
                         ],
                       ),
                     )
