@@ -210,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               SizedBox(height: 20,),
                               GestureDetector(
                                 onTap: () {
-                                  MaterialPageRoute(builder: (context) => RegistrationPage());
+                                  Navigator.push(context,MaterialPageRoute(builder: (context) => RegistrationPage()));
                                 },
                                 child: Text(
                                   'Register',

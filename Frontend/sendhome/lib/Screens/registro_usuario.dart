@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:sendhome/global/global.dart';
+import '../Assistants/select_imagen.dart';
 import 'LoginScreen.dart';
 
 
@@ -24,33 +28,54 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   bool _passwordVisible = false;
 
-  void _sumit() async {
+  void _submit() async {
     if (_formKey.currentState!.validate()) {
-      await firebaseAuth.createUserWithEmailAndPassword(
-        email: _correoController.text.trim(),
-        password: _passwordUserController.text.trim(),
-      ).then((value) async {
-        currentUser = value.user;
-        if (currentUser != null) {
-          Map userMap = {
-            "id": currentUser!.uid,
-            "name": _nombreUserController.text.trim(),
-            "email": _correoController.text.trim(),
-            "phone": _numUserController.text.trim(),
-          };
-          DatabaseReference userRef = FirebaseDatabase.instance.ref().child("users");
-          userRef.child(currentUser!.uid).set(userMap);
+      try {
+        // Sube la foto de perfil a Firebase Storage si se seleccionó una
+        if (Foto_Perfil != null) {
+          String fotoPerfilStoragePath = 'profiles/${currentUser!.uid}/profile_image.jpg';
+          final fotoPerfilRef = FirebaseStorage.instance.ref().child(fotoPerfilStoragePath);
+          await fotoPerfilRef.putFile(Foto_Perfil!);
         }
-        await Fluttertoast.showToast(msg: "Successfully Registered");
-        Navigator.push(context, MaterialPageRoute(builder: (c) => LoginScreen()));
-      }).catchError((errorMessage) {
-        Fluttertoast.showToast(msg: "Error occurred: \n $errorMessage");
-      });
+
+        // Continúa con el proceso de registro
+        await firebaseAuth.createUserWithEmailAndPassword(
+          email: _correoController.text.trim(),
+          password: _passwordUserController.text.trim(),
+        ).then((value) async {
+          currentUser = value.user;
+          if (currentUser != null) {
+            Map userMap = {
+              "id": currentUser!.uid,
+              "name": _nombreUserController.text.trim(),
+              "email": _correoController.text.trim(),
+              "phone": _numUserController.text.trim(),
+            };
+
+            // Agrega la referencia a la foto de perfil en el mapa del usuario
+            if (Foto_Perfil != null) {
+              String fotoPerfilStoragePath = 'profiles/${currentUser!.uid}/profile_image.jpg';
+              userMap["profile_image"] = fotoPerfilStoragePath;
+            }
+
+            DatabaseReference userRef = FirebaseDatabase.instance.ref().child("users");
+            userRef.child(currentUser!.uid).set(userMap);
+          }
+
+          await Fluttertoast.showToast(msg: "Successfully Registered");
+          Navigator.push(context, MaterialPageRoute(builder: (c) => LoginScreen()));
+        }).catchError((errorMessage) {
+          Fluttertoast.showToast(msg: "Error occurred: \n $errorMessage");
+        });
+      } catch (e) {
+        Fluttertoast.showToast(msg: "Error occurred: \n $e");
+      }
     } else {
       Fluttertoast.showToast(msg: "Not all fields are valid");
     }
   }
 
+  File? Foto_Perfil;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,6 +109,33 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      InkWell(
+                        onTap: () async {
+                          final imagen = await getImagen();
+                          setState(() {
+                            Foto_Perfil = File(imagen!.path);
+                          });
+                        },
+                        child: CircleAvatar(
+                          radius: 100,
+                          backgroundColor: Colors.deepPurpleAccent,
+                          child: Foto_Perfil != null
+                              ? ClipOval(
+                            child: Image.file(
+                              Foto_Perfil!,
+                              width: 200,
+                              height: 200,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                              : Icon(
+                            Icons.person,
+                            size: 100,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 1),
                       IntlPhoneField(
                         showCountryFlag: false,
                         dropdownIcon: Icon(
@@ -266,7 +318,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         alignment: Alignment.bottomCenter,
                         child: ElevatedButton(
                           onPressed: () {
-                            _sumit();
+                            _submit();
                             print(_formKey.currentState);
                           },
                           style: ElevatedButton.styleFrom(
