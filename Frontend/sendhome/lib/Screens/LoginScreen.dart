@@ -1,10 +1,12 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sendhome/Screens/registro_usuario.dart';
 import '../global/global.dart';
 import 'Mapa_usuario.dart';
 import 'forgot_password_screen.dart';
+import 'package:sendhome/splashScreen/splash_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -24,10 +26,23 @@ class _LoginScreenState extends State<LoginScreen> {
       await firebaseAuth.signInWithEmailAndPassword(
         email: _correoController.text.trim(),
         password: _passwordController.text.trim(),
-      ).then((value) async {
-        currentUser = value.user;
-        await Fluttertoast.showToast(msg: "Successfully Logged In");
-        Navigator.push(context, MaterialPageRoute(builder: (c) => MyMapScreen()));
+      ).then((auth) async {
+
+        DatabaseReference userReference = FirebaseDatabase.instance.ref().child("users");
+        userReference.child(firebaseAuth.currentUser!.uid).once().then((value) async{
+          final snap =value.snapshot;
+          if(snap.value !=null){
+            currentUser = auth.user;
+            await Fluttertoast.showToast(msg: "Successfully Logged In");
+            Navigator.push(context, MaterialPageRoute(builder: (c) => MyMapScreen()));
+          }
+          else{
+            await Fluttertoast.showToast(msg: "No record exist whith this email");
+            firebaseAuth.signOut();
+            Navigator.push(context, MaterialPageRoute(builder: (c) => SplashScreen()));
+          }
+        });
+
       }).catchError((errorMessage) {
         Fluttertoast.showToast(msg: "Error occurred: \n $errorMessage");
       });
@@ -46,20 +61,6 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            actions: [
-              IconButton(
-                icon: Icon(Icons.person_add_alt_rounded, size: 40, color: Colors.black87),
-                constraints: BoxConstraints.tightFor(width: 60, height: 60),
-                highlightColor: Colors.cyan,
-                splashColor: Colors.blue,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => RegistrationPage()),
-                  );
-                },
-              ),
-            ],
             toolbarHeight: 80,
             titleTextStyle: const TextStyle(
               fontSize: 28.0,
