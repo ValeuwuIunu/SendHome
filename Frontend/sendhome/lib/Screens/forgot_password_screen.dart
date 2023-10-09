@@ -77,7 +77,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               ),
                               enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.black54)),
-                              prefixIcon: Icon(Icons.mail,color: Colors.deepPurpleAccent),
+                              prefixIcon: Icon(Icons.mail,color: Color.fromRGBO(47, 8, 73, 0.5)),
                             ),
                             cursorColor: Colors.blue,
                             autovalidateMode:AutovalidateMode.onUserInteraction,

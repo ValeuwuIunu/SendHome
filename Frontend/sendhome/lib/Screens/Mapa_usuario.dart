@@ -174,7 +174,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
     Circle originCircle = Circle(
         circleId: CircleId("originID"),
-      fillColor: Colors.green,
+      fillColor: Colors.red,
       radius: 12,
       strokeWidth: 3,
       strokeColor: Colors.white,
@@ -183,7 +183,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
     Circle destinationCircle = Circle(
         circleId: CircleId("destinationID"),
-        fillColor: Colors.green,
+        fillColor: Colors.deepPurpleAccent,
         radius: 12,
         strokeWidth: 3,
         strokeColor: Colors.white,
@@ -293,7 +293,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                     backgroundColor: Colors.white,
                     child: Icon(
                       Icons.menu,
-                      color: Colors.deepPurpleAccent ,
+                      color: Color.fromRGBO(47, 8, 73, 0.5) ,
                     ),
                   ) ,
                 ),
@@ -319,6 +319,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                       child: Column(
                         children: [
                           Container(
+                            height: 120,
                             decoration: BoxDecoration(
                               color: Colors.white,
                                 borderRadius: BorderRadius.circular(10)
@@ -329,21 +330,32 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                     padding: EdgeInsets.all(5),
                                   child: Row(
                                     children: [
-                                      Icon(Icons.location_on_outlined ,color : Colors.deepPurpleAccent),
+                                    SizedBox(
+                                    height: 25.0,
+                                    width: 30.0,
+                                      child: IconButton(
+                                        icon: Icon(Icons.location_on_outlined ,color:Color.fromRGBO(47, 8, 73, 0.5), size: 25.0),
+                                        onPressed: (){
+                                          Navigator.push(context, MaterialPageRoute(builder: (c)=>PrecisePickUpScreen()));
+
+                                        },
+                                      ),
+                                    ),
+                                        //(Icons.location_on_outlined ,color:Color.fromRGBO(47, 8, 73, 0.5),),
                                       SizedBox(width:10),
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text("From",
+                                          Text("Punto de partida",
                                             style: TextStyle(
-                                              color: Colors.deepPurpleAccent,
+                                              color: Color.fromRGBO(47, 8, 73, 0.5),
                                               fontSize: 12,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                           Text(Provider.of<AppInfo>(context).userPickUpLocation !=null
                                               ? (Provider.of<AppInfo>(context).userPickUpLocation!.locationName!).substring(0,24)+"...":
-                                              "Not get adresss",
+                                              "No hay una dirección",
                                             style: TextStyle(color: Colors.grey,fontSize: 14),
                                           )
                                         ],
@@ -374,21 +386,26 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                     },
                                     child: Row(
                                       children: [
-                                        Icon(Icons.location_on_outlined ,color : Colors.deepPurpleAccent),
-                                        SizedBox(width:10),
+                                        SizedBox(
+                                          height: 25.0,
+                                          width: 43.0,
+                                        child: Icon(Icons.location_on_outlined ,color : Color.fromRGBO(47, 8, 73, 0.5), size: 25.0),
+                                        ),
+                                        SizedBox(width:0.2),
                                         Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text("To",
+                                            Text("Punto de llegada",
                                               style: TextStyle(
-                                                color: Colors.deepPurpleAccent,
+                                                color: Color.fromRGBO(47, 8, 73, 0.5),
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
+
                                             Text(Provider.of<AppInfo>(context).userDropOffLocation !=null
                                                 ?Provider.of<AppInfo>(context).userDropOffLocation!.locationName!
-                                            :"where to?",
+                                            :"¿A dónde lo llevamos?",
                                               style: TextStyle(color: Colors.grey,fontSize: 14),
                                             )
                                           ],
@@ -401,31 +418,6 @@ class _MyMapScreenState extends State<MyMapScreen> {
                             ),
                           ),
 
-                          SizedBox(height: 5,),
-                          
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                  onPressed: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (c)=>PrecisePickUpScreen()));
-                                  },
-                                  child: Text(
-                                    "ChangePick Up",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.deepPurpleAccent,
-                                    textStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    )
-
-                                  ),
-                              ),
-
                               SizedBox(width: 10,),
 
                               ElevatedButton(
@@ -433,30 +425,32 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
                                 },
                                 child: Text(
-                                  "Request a ride",
+                                  "Solicitar acarreo",
                                   style: TextStyle(
                                     color: Colors.white,
                                   ),
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                    primary: Colors.deepPurpleAccent,
+                                    primary: Color.fromRGBO(47, 8, 73, 0.5),
                                     textStyle: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
-                                    )
+                                    ),
 
-                                ),
-                              ),
+
+                                )
+                              )
                             ],
-                          )
-
+                          ),
+                              )
                         ],
                       ),
-                    )
+                    ),
+            )
                   ],
                 ),
               ),
-            )
+            );
            
            
            /* Positioned(
@@ -478,9 +472,8 @@ class _MyMapScreenState extends State<MyMapScreen> {
               ),*/
 
 
-          ],
-        ),
-      ),
-    );
+
+
+
   }
 }

@@ -81,7 +81,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     return Scaffold(
       backgroundColor: Color.fromRGBO(204, 200, 236, 1.0),
       appBar: AppBar(
-        toolbarHeight: 80 ,
+        toolbarHeight: 40 ,
         titleTextStyle: const TextStyle(
           fontSize: 28.0,
           fontWeight: FontWeight.bold,
@@ -93,14 +93,18 @@ class _RegistrationPageState extends State<RegistrationPage> {
       body: ListView(
         children: [
           Container(
-            padding: EdgeInsets.all(9.5),
+            padding: EdgeInsets.all(17.5),
             child: Card(
+
               color: Color.fromRGBO(185, 175, 224, 1.0),
               elevation: 6.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
               ),
-              margin: EdgeInsets.all(28.5),
+                child: Container(
+                  height: 750,
+              width: 100,
+              margin: EdgeInsets.all(15.5),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Form(
@@ -118,7 +122,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         },
                         child: CircleAvatar(
                           radius: 100,
-                          backgroundColor: Colors.deepPurpleAccent,
+                          backgroundColor: Color.fromRGBO(47, 8, 73, 0.5),
                           child: Foto_Perfil != null
                               ? ClipOval(
                             child: Image.file(
@@ -140,14 +144,19 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         showCountryFlag: false,
                         dropdownIcon: Icon(
                           Icons.arrow_drop_down,
-                          color: Colors.deepPurpleAccent,
+                          color: Color.fromRGBO(47, 8, 73, 0.5),
                         ),
                         decoration: InputDecoration(
                           hintText: "Número",
                           hintStyle: TextStyle(
-                            color: Colors.grey,
+                            color: Colors.black54,
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.deepPurpleAccent),
                           ),
                         ),
+                        cursorColor: Colors.deepPurpleAccent,
                         initialCountryCode: 'CC',
                         onChanged: (value) {
                           setState(() {
@@ -166,13 +175,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           ),
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                                color: Colors.blue),
+                                color: Colors.deepPurpleAccent),
                           ),
                           enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.black54)),
-                          prefixIcon: Icon(Icons.person, color: Colors.deepPurpleAccent),
+                          prefixIcon: Icon(Icons.person, color: Color.fromRGBO(47, 8, 73, 0.5)),
                         ),
-                        cursorColor: Colors.blue,
+                        cursorColor: Colors.deepPurpleAccent,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -197,13 +206,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           ),
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                                color: Colors.blue),
+                                color: Colors.deepPurpleAccent),
                           ),
                           enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.black54)),
-                          prefixIcon: Icon(Icons.mail,color: Colors.deepPurpleAccent),
+                          prefixIcon: Icon(Icons.mail,color: Color.fromRGBO(47, 8, 73, 0.5)),
                         ),
-                        cursorColor: Colors.blue,
+                        cursorColor: Colors.deepPurpleAccent,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -231,15 +240,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           ),
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                                color: Colors.blue),
+                                color: Colors.deepPurpleAccent),
                           ),
                           enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.black54)),
-                          prefixIcon: Icon(Icons.password,color: Colors.deepPurpleAccent),
+                          prefixIcon: Icon(Icons.password,color: Color.fromRGBO(47, 8, 73, 0.5)),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                              color: Colors.deepPurpleAccent,
+                              color: Color.fromRGBO(47, 8, 73, 0.5),
                             ),
                             onPressed: () {
                               setState(() {
@@ -248,7 +257,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             },
                           ),
                         ),
-                        cursorColor: Colors.blue,
+                        cursorColor: Colors.deepPurpleAccent,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -276,15 +285,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           ),
                           focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                                color: Colors.blue),
+                                color: Colors.deepPurpleAccent),
                           ),
                           enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.black54)),
-                          prefixIcon: Icon(Icons.password,color: Colors.deepPurpleAccent),
+                          prefixIcon: Icon(Icons.password,color: Color.fromRGBO(47, 8, 73, 0.5)),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                              color: Colors.deepPurpleAccent,
+                              color: Color.fromRGBO(47, 8, 73, 0.5),
                             ),
                             onPressed: () {
                               setState(() {
@@ -293,7 +302,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             },
                           ),
                         ),
-                        cursorColor: Colors.blue,
+                        cursorColor: Colors.deepPurpleAccent,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -337,25 +346,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20,),
-                      GestureDetector(
-                        onTap: (){},
-                        child: Center(
-                          child: Text(
-                            'Forgot password',
-                            style: TextStyle(
-                              color: Colors.deepPurpleAccent,
-                            ),
-                          ),
-                        ),
-                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Tienes una cuenta?",
+                            "¿Tienes una cuenta?",
                             style: TextStyle(
-                              color: Colors.black45,
+                              color: Color.fromRGBO(47, 8, 73, 0.9),
                               fontSize: 15,
                             ),
                           ),
@@ -365,10 +362,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
                               Navigator.push(context,MaterialPageRoute(builder: (context) => LoginScreen()));
                             },
                             child: Text(
-                              'sing In',
+                              'Ingresa',
                               style: TextStyle(
                                 fontSize: 15,
-                                color: Colors.deepPurpleAccent,
+                                color: Color.fromRGBO(74, 35, 90, 0.9),
+                                decoration: TextDecoration.underline,
                               ),
                             ),
                           ),
@@ -379,6 +377,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
               ),
             ),
+          ),
           ),
         ],
       ),

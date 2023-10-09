@@ -116,13 +116,13 @@ class _PrecisePickUpScreenState extends State<PrecisePickUpScreen> {
               left: 20,
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.deepPurpleAccent),
+                  border: Border.all(color: Color.fromRGBO(47, 8, 73, 0.5)),
                   color: Colors.white,
                 ),
                 padding: EdgeInsets.all(20),
                 child: Text(
                   Provider.of<AppInfo>(context).userPickUpLocation !=null
-                      ? (Provider.of<AppInfo>(context).userPickUpLocation!.locationName!).substring(0,24)+"...":"Not get adresss",
+                      ? (Provider.of<AppInfo>(context).userPickUpLocation!.locationName!).substring(0,24)+"...":"No se obtiene una dirección",
                   overflow:TextOverflow.visible,softWrap:true,
                 ),
                 ),
@@ -139,13 +139,18 @@ class _PrecisePickUpScreenState extends State<PrecisePickUpScreen> {
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.deepPurpleAccent,
+                  primary: Color.fromRGBO(47, 8, 73, 3),
                   textStyle: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: Text("Set current Location"),
+                child: Text("Escoger esta dirección",
+                  style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),),
               ),
             ) ,
           ),

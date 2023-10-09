@@ -47,7 +47,7 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.deepPurpleAccent,
+          backgroundColor: Color.fromRGBO(47, 8, 73, 2.9),
           leading: GestureDetector(
             onTap: (){
               Navigator.pop(context);
@@ -56,7 +56,7 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
           ),
           title: Text(
             "Buscar ubicación de entrega",
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white, fontSize: 15),
           ),
           elevation: 0.0,
         ),
@@ -64,7 +64,7 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: Colors.deepPurpleAccent,
+                color: Color.fromRGBO(47, 8, 73, 2.9),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.white54,
@@ -98,7 +98,7 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
                                   findPlaceAutoCompleteSearch(value);
                                 },
                                 decoration: InputDecoration(
-                                  hintText: "Search location here...",
+                                  hintText: "Ingresa la úbicación acá",
                                   fillColor: Colors.white54,
                                   filled: true,
                                   border: InputBorder.none,
@@ -108,6 +108,7 @@ class _SearchPlaceScreenState extends State<SearchPlaceScreen> {
                                     bottom: 8
                                   )
                                 ),
+                                cursorColor: Colors.deepPurpleAccent,
                               ),
                             )
                         ),

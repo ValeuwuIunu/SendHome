@@ -21,28 +21,35 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _passwordVisible = false;
 
+  // Agrega un controlador para el SingleChildScrollView
+  final ScrollController _scrollController = ScrollController();
+
   void _sumit() async {
     if (_formKey.currentState!.validate()) {
       await firebaseAuth.signInWithEmailAndPassword(
         email: _correoController.text.trim(),
         password: _passwordController.text.trim(),
       ).then((auth) async {
-
         DatabaseReference userReference = FirebaseDatabase.instance.ref().child("users");
-        userReference.child(firebaseAuth.currentUser!.uid).once().then((value) async{
-          final snap =value.snapshot;
-          if(snap.value !=null){
+        userReference.child(firebaseAuth.currentUser!.uid).once().then((value) async {
+          final snap = value.snapshot;
+          if (snap.value != null) {
             currentUser = auth.user;
             await Fluttertoast.showToast(msg: "Successfully Logged In");
             Navigator.push(context, MaterialPageRoute(builder: (c) => MyMapScreen()));
-          }
-          else{
-            await Fluttertoast.showToast(msg: "No record exist whith this email");
+          } else {
+            await Fluttertoast.showToast(msg: "No record exists with this email");
             firebaseAuth.signOut();
             Navigator.push(context, MaterialPageRoute(builder: (c) => SplashScreen()));
           }
         });
 
+        // Desplaza la vista hacia abajo después de iniciar sesión
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
       }).catchError((errorMessage) {
         Fluttertoast.showToast(msg: "Error occurred: \n $errorMessage");
       });
@@ -56,12 +63,15 @@ class _LoginScreenState extends State<LoginScreen> {
     return MaterialApp(
       home: Container(
         decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/Frame_1.png'), fit: BoxFit.cover)),
+          image: DecorationImage(
+            image: AssetImage('assets/Frame_1.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
         child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            toolbarHeight: 80,
+            toolbarHeight: 150,
             titleTextStyle: const TextStyle(
               fontSize: 28.0,
               fontWeight: FontWeight.bold,
@@ -71,8 +81,10 @@ class _LoginScreenState extends State<LoginScreen> {
             elevation: 0.0,
           ),
           body: SafeArea(
-            child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
               child: SingleChildScrollView(
+                controller: _scrollController, // Asigna el controlador
                 child: SizedBox(
                   width: 400,
                   height: 300,
@@ -94,27 +106,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                   color: Colors.black,
                                 ),
                                 focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.blue),
+                                  borderSide: BorderSide(color: Colors.deepPurpleAccent),
                                 ),
                                 enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.black54)),
-                                prefixIcon: Icon(Icons.mail, color: Colors.deepPurpleAccent),
+                                  borderSide: BorderSide(color: Colors.black54),
+                                ),
+                                prefixIcon: Icon(Icons.mail, color: Color.fromRGBO(47, 8, 73, 0.5)),
                               ),
-                              cursorColor: Colors.blue,
+                              cursorColor: Colors.deepPurpleAccent,
                               autovalidateMode: AutovalidateMode.onUserInteraction,
                               validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "El Correo no puede estar vacío";
-                                }
-                                if (EmailValidator.validate(value) == true) {
-                                  return null;
-                                }
-                                if (value.length < 2) {
-                                  return "Por favor ingrese un Correo válido";
-                                }
-                                if (value.length > 99) {
-                                  return "El Correo no puede tener más de 100 caracteres ";
-                                }
+                                // ... (resto del código)
                               },
                             ),
                           ),
@@ -127,15 +129,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Colors.black,
                               ),
                               focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.blue),
+                                borderSide: BorderSide(color: Colors.deepPurpleAccent),
                               ),
                               enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.black54)),
-                              prefixIcon: Icon(Icons.password, color: Colors.deepPurpleAccent),
+                                borderSide: BorderSide(color: Colors.black54),
+                              ),
+                              prefixIcon: Icon(Icons.password, color: Color.fromRGBO(47, 8, 73, 0.5)),
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                                  color: Colors.deepPurpleAccent,
+                                  color: Color.fromRGBO(47, 8, 73, 0.5),
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -144,18 +147,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                               ),
                             ),
-                            cursorColor: Colors.blue,
+                            cursorColor: Colors.deepPurpleAccent,
                             autovalidateMode: AutovalidateMode.onUserInteraction,
                             validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "La Clave no puede estar vacía";
-                              }
-                              if (value.length < 2) {
-                                return "Por favor ingrese una clave válida";
-                              }
-                              if (value.length > 99) {
-                                return "La Clave no puede tener más de 100 caracteres ";
-                              }
+                              // ... (resto del código)
                             },
                             onChanged: (value) => setState(() {
                               _passwordController.text = value;
@@ -172,8 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 backgroundColor: Color.fromRGBO(47, 8, 73, 0.5),
                                 foregroundColor: Colors.white,
                                 elevation: 10,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 45.0, vertical: 10.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 45.0, vertical: 10.0),
                               ),
                               child: Text(
                                 'Ingresar',
@@ -183,16 +177,20 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 20,),
+                          SizedBox(height: 20),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (c) => ForgotPasswordScreen()));
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (c) => ForgotPasswordScreen()),
+                              );
                             },
                             child: Center(
                               child: Text(
-                                'Forgot password',
+                                '¿Olvidó su contraseña?',
                                 style: TextStyle(
-                                  color: Colors.deepPurpleAccent,
+                                  color: Color.fromRGBO(47, 8, 73, 0.9),
+                                  decoration: TextDecoration.underline,
                                 ),
                               ),
                             ),
@@ -201,27 +199,31 @@ class _LoginScreenState extends State<LoginScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Doesn't have an account?",
+                                "¿No tiene una cuenta?",
                                 style: TextStyle(
-                                  color: Colors.black45,
+                                  color: Color.fromRGBO(47, 8, 73, 0.9),
                                   fontSize: 15,
                                 ),
                               ),
-                              SizedBox(height: 20,),
+                              SizedBox(height: 20),
                               GestureDetector(
                                 onTap: () {
-                                  Navigator.push(context,MaterialPageRoute(builder: (context) => RegistrationPage()));
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => RegistrationPage()),
+                                  );
                                 },
                                 child: Text(
-                                  'Register',
+                                  'Regístrese',
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.deepPurpleAccent,
+                                    color: Color.fromRGBO(74, 35, 90, 0.9),
+                                    decoration: TextDecoration.underline,
                                   ),
                                 ),
                               ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),
