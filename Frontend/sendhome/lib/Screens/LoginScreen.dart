@@ -116,7 +116,18 @@ class _LoginScreenState extends State<LoginScreen> {
                               cursorColor: Colors.deepPurpleAccent,
                               autovalidateMode: AutovalidateMode.onUserInteraction,
                               validator: (value) {
-                                // ... (resto del código)
+                                if (value == null || value.isEmpty) {
+                                return "El Correo no puede estar vacío";
+                              }
+                              if (EmailValidator.validate(value) == true) {
+                                return null;
+                              }
+                              if (value.length < 2) {
+                                return "Por favor ingrese un Correo válido";
+                              }
+                              if (value.length > 99) {
+                                return "El Correo no puede tener más de 100 caracteres ";
+                              }
                               },
                             ),
                           ),
@@ -150,7 +161,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             cursorColor: Colors.deepPurpleAccent,
                             autovalidateMode: AutovalidateMode.onUserInteraction,
                             validator: (value) {
-                              // ... (resto del código)
+                              if (value == null || value.isEmpty) {
+                                return "La Clave no puede estar vacía";
+                              }
+                              if (value.length < 2) {
+                                return "Por favor ingrese una clave válida";
+                              }
+                              if (value.length > 99) {
+                                return "La Clave no puede tener más de 100 caracteres ";
+                              }
                             },
                             onChanged: (value) => setState(() {
                               _passwordController.text = value;
