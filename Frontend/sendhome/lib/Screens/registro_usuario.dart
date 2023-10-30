@@ -28,44 +28,39 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   bool _passwordVisible = false;
 
-  void _submit() async {
+  void _sumit() async {
     if (_formKey.currentState!.validate()) {
       try {
-        // Sube la foto de perfil a Firebase Storage si se seleccionó una
-        if (Foto_Perfil != null) {
-          String fotoPerfilStoragePath = 'profiles/${currentUser!.uid}/profile_image.jpg';
-          final fotoPerfilRef = FirebaseStorage.instance.ref().child(fotoPerfilStoragePath);
-          await fotoPerfilRef.putFile(Foto_Perfil!);
-        }
-
-        // Continúa con el proceso de registro
-        await firebaseAuth.createUserWithEmailAndPassword(
+        await firebaseAuth
+            .createUserWithEmailAndPassword(
           email: _correoController.text.trim(),
           password: _passwordUserController.text.trim(),
-        ).then((value) async {
+        )
+            .then((value) async {
           currentUser = value.user;
           if (currentUser != null) {
+            // Sube la imagen de perfil a Firebase Storage
+            String profileImagePath =
+                'users/${currentUser!.uid}/profile_image.jpg';
+            final profileImageRef =
+            FirebaseStorage.instance.ref().child(profileImagePath);
+            await profileImageRef.putFile(Foto_Perfil!);
+
+
             Map userMap = {
               "id": currentUser!.uid,
               "name": _nombreUserController.text.trim(),
               "email": _correoController.text.trim(),
               "phone": _numUserController.text.trim(),
+              "Foto_Perfil": profileImagePath,
             };
-
-            // Agrega la referencia a la foto de perfil en el mapa del usuario
-            if (Foto_Perfil != null) {
-              String fotoPerfilStoragePath = 'profiles/${currentUser!.uid}/profile_image.jpg';
-              userMap["profile_image"] = fotoPerfilStoragePath;
-            }
-
-            DatabaseReference userRef = FirebaseDatabase.instance.ref().child("users");
+            DatabaseReference userRef =
+            FirebaseDatabase.instance.ref().child("users");
             userRef.child(currentUser!.uid).set(userMap);
           }
-
           await Fluttertoast.showToast(msg: "Successfully Registered");
-          Navigator.push(context, MaterialPageRoute(builder: (c) => LoginScreen()));
-        }).catchError((errorMessage) {
-          Fluttertoast.showToast(msg: "Error occurred: \n $errorMessage");
+          Navigator.push(
+              context, MaterialPageRoute(builder: (c) => LoginScreen()));
         });
       } catch (e) {
         Fluttertoast.showToast(msg: "Error occurred: \n $e");
@@ -327,8 +322,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         alignment: Alignment.bottomCenter,
                         child: ElevatedButton(
                           onPressed: () {
-                            _submit();
+                            _sumit();
                             print(_formKey.currentState);
+                            print(_nombreUserController.text);
+                            print(_numUserController.text);
+                            print(_correoController.text);
+                            print(_passwordUserController.text);
+                            print(_passwordCUserController.text);
+                            print(Foto_Perfil);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromRGBO(47, 8, 73, 0.5),
