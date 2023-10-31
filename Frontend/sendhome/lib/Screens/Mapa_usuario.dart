@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoder2/geocoder2.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -48,6 +49,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
   double searchLocationContainerHeight =200;
   double waitinResponsefromDrivercomtainerHeigth = 0;
   double assigneddriverInfoContainerHeight = 0;
+  double suggestedRidesContainerHeight = 0;
 
   Position? userCurrentPosition;
   var geoLocation = Geolocator();
@@ -298,6 +300,13 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
 
   }
+
+  void  showSuggestRidesContainer(){
+    setState(() {
+      suggestedRidesContainerHeight = 400;
+      bottomPaddingOffMap =400;
+    });
+  }
   
   /*getAddressFromLatLng()async{
     try{
@@ -526,7 +535,11 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
                               ElevatedButton(
                                 onPressed: (){
-
+                                  if(Provider.of<AppInfo>(context,listen: false).userDropOffLocation != null){
+                                    showSuggestRidesContainer();
+                                  }else{
+                                    Fluttertoast.showToast(msg: "Please select destination location");
+                                  }
                                 },
                                 child: Text(
                                   "Solicitar acarreo",
@@ -550,13 +563,136 @@ class _MyMapScreenState extends State<MyMapScreen> {
                         ],
                       ),
                     ),
+            ),
+      //ui for suggested rides
+            Positioned(
+              left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  height: suggestedRidesContainerHeight,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      topLeft: Radius.circular(20)
+                    )
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: Colors.deepPurpleAccent ,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                              child:Icon(
+                                Icons.star,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(width: 15,),
+
+                            Text(Provider.of<AppInfo>(context).userPickUpLocation !=null
+                                ? (Provider.of<AppInfo>(context).userPickUpLocation!.locationName!).substring(0,24)+"...":
+                            "No hay una dirección",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20,),
+
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: Colors.grey ,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                              child:Icon(
+                                Icons.star,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(width: 15,),
+
+                            Text(Provider.of<AppInfo>(context).userDropOffLocation !=null
+                                ?Provider.of<AppInfo>(context).userDropOffLocation!.locationName!
+                                :"¿A dónde lo llevamos?",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20,),
+                        Text("SUGGESTED RIDES",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        SizedBox(height: 20,),
+
+                        Row(
+
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(25.0),
+                                child: Column(
+                                  children: [
+                                    Image.asset('assets/Pequeño.jpg',scale: 2,),
+
+
+                                    SizedBox(height: 8,),
+
+                                    Text(
+                                        "X",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    SizedBox(height: 2,),
+                                    Text(
+                                    tripdirectionDetailsInfo != null ? "${((AssistanMethods.calculateFareAmountFromOriginToDestination(tripdirectionDetailsInfo!)*2)*107).toStringAsFixed(1)}"
+                                    :"null",
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                )
             )
                   ],
                 ),
               ),
             );
            
-           
+
            /* Positioned(
               top: 40,
               right: 20,

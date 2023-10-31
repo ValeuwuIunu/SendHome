@@ -77,6 +77,17 @@ class AssistanMethods{
 
   }
 
+  static double calculateFareAmountFromOriginToDestination(DirectionDetailsInfo directionDetailsInfo) {
+    // Supongamos que la tarifa de Didi Colombia es de 1000 pesos colombianos por minuto y 500 pesos colombianos por kilómetro.
+    double timeTravelFareAmountPerMinute = (directionDetailsInfo.duration_value! / 60) * 100;
+    double distanceTraveledFareAmountPerKilometer = (directionDetailsInfo.distance_value! / 1000) * 500;
+
+    // Calcula la tarifa en pesos colombianos
+    double totalFareAmountInPesos = timeTravelFareAmountPerMinute + distanceTraveledFareAmountPerKilometer;
+
+    return double.parse(totalFareAmountInPesos.toStringAsFixed(1));
+  }
+
 
 
 }
