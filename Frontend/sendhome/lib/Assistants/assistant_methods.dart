@@ -7,7 +7,7 @@ import 'package:sendhome/Assistants/request_assistant.dart';
 import 'package:sendhome/global/global.dart';
 import 'package:sendhome/models/directions.dart';
 import 'package:sendhome/models/user_model.dart';
-
+import
 import '../global/map_key.dart';
 import '../infoHadler/app_info.dart';
 import '../models/direction_detail_info.dart';
@@ -79,7 +79,7 @@ class AssistanMethods{
 
   static double calculateFareAmountFromOriginToDestination(DirectionDetailsInfo directionDetailsInfo) {
     // Supongamos que la tarifa de Didi Colombia es de 1000 pesos colombianos por minuto y 500 pesos colombianos por kilómetro.
-    double timeTravelFareAmountPerMinute = (directionDetailsInfo.duration_value! / 60) * 100;
+    double timeTravelFareAmountPerMinute = (directionDetailsInfo.duration_value! / 60) * 10;
     double distanceTraveledFareAmountPerKilometer = (directionDetailsInfo.distance_value! / 1000) * 500;
 
     // Calcula la tarifa en pesos colombianos
@@ -88,6 +88,31 @@ class AssistanMethods{
     return double.parse(totalFareAmountInPesos.toStringAsFixed(1));
   }
 
+
+  static sendNotificationToDriverNow(String deviceRegistrationToken,String userRideRequestId,context) async{
+    String destinationAddress = userDropOffAddress;
+
+    Map<String,String>headerNotification = {
+      'Content-Type':'aplication/json',
+      'Authorization':cloundMessagingServerToken,
+    };
+
+    Map bodyNotification ={
+      "body":"Destination Addres: \n $destinationAddress.",
+      "title":"New Trip Request"
+    };
+
+    Map dataMap = {
+      "click_action":"FLUTTER_NOTIFICATION_CLICK",
+      "id":"1",
+      "status":"done",
+      "rideRequestId":userRideRequestId
+    };
+
+    var responseNotification = http.post(
+
+    )
+  }
 
 
 }
