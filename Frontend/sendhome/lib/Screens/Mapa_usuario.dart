@@ -23,6 +23,7 @@ import 'package:sendhome/splashScreen/splash_screen.dart';
 import 'package:sendhome/widgets/progres_dialog.dart';
 
 import '../models/directions.dart';
+import '../widgets/pay_fare_amount_dialog.dart';
 
 
 class MyMapScreen extends StatefulWidget {
@@ -317,7 +318,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
   void showSearchingForDriversContainer(){
     setState(() {
-      searchLocationContainerHeight =200;
+      searchingForDriverContainerHeight =200;
     });
   }
 
@@ -466,7 +467,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
     searchNearestOnlineDrivers(selectedVehicleType);
   }
 
-  searchNearestOnlineDrivers( StringselectedVehicleType) async{
+  searchNearestOnlineDrivers(String selectedVehicleType) async{
 
     if(onlineNearByAvailableDriversList.length==0){
       //cancel/delete the rideRequest Information
@@ -494,7 +495,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
     print("Driver List: "+ driversList.toString());
 
     for(int i=0;i < driversList.length;i++){
-      if(driversList[i]["car_details"]["type"] ==selectedVehicleType){
+      if(driversList[i]["car_details"]["Tamaño Camion"] ==selectedVehicleType){
         AssistanMethods.sendNotificationToDriverNow(driversList[i]["token"],referenceRideRequest!.key!,context);
       }
     }
@@ -502,8 +503,8 @@ class _MyMapScreenState extends State<MyMapScreen> {
     Fluttertoast.showToast(msg: "Notification sent Successfully");
 
     showSearchingForDriversContainer();
-    
-    await FirebaseDatabase.instance.ref().child("All Ride Reques").child(referenceRideRequest!.key!).child("driverId").onValue.listen((eventRideRequestSnapshot) {
+
+    await FirebaseDatabase.instance.ref().child("All Ride Request").child(referenceRideRequest!.key!).child("driverId").onValue.listen((eventRideRequestSnapshot) {
 
       print("EventSnapshot: ${eventRideRequestSnapshot.snapshot.value}");
       if(eventRideRequestSnapshot.snapshot.value != null){
@@ -576,7 +577,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
     });
   }
 
-  retrieveOnlineDriversinformation(List onlineNearByAvailableDriversList) async{
+  retrieveOnlineDriversinformation(List onlineNearByAvailableDriversList) async {
 
     driversList.clear();
     DatabaseReference ref = FirebaseDatabase.instance.ref().child("drivers");
@@ -1059,12 +1060,86 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                 ),
                               ) ,
                             )
+                        ),
+
+                      ],
+                    ),
+                  ),
+                )
+            ),
+
+            //Requesting a ride
+            Positioned(
+              bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: searchingForDriverContainerHeight,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(15),topRight: Radius.circular(15)),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24,vertical: 18),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        LinearProgressIndicator(
+                          color: Colors.deepPurpleAccent,
+                        ),
+
+                        SizedBox(height: 10,),
+
+                        Center(
+                          child: Text(
+                            "Searching for a driver ...",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 20,),
+
+                        GestureDetector(
+                          onTap: (){
+                            referenceRideRequest!.remove();
+                            setState(() {
+                              searchingForDriverContainerHeight=0;
+                              suggestedRidesContainerHeight=0;
+                            });
+                          },
+                          child: Container(
+                            height: 50,
+                            width:50,
+                            decoration:BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(25),
+                              border: Border.all(width: 1,color: Colors.grey)
+                            ),
+                            child: Icon(Icons.close,size:25,),
+                          ),
+                        ),
+
+                        SizedBox(height: 15,),
+
+                        Container(
+                          width: double.infinity,
+                          child: Text(
+                            "Cancel",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.red,fontSize: 15,fontWeight: FontWeight.bold),
+                          ),
                         )
                       ],
                     ),
                   ),
                 )
             )
+
                   ],
                 ),
               ),

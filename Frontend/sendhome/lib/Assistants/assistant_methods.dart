@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
@@ -7,7 +9,7 @@ import 'package:sendhome/Assistants/request_assistant.dart';
 import 'package:sendhome/global/global.dart';
 import 'package:sendhome/models/directions.dart';
 import 'package:sendhome/models/user_model.dart';
-import
+import 'package:http/http.dart' as http;
 import '../global/map_key.dart';
 import '../infoHadler/app_info.dart';
 import '../models/direction_detail_info.dart';
@@ -109,9 +111,19 @@ class AssistanMethods{
       "rideRequestId":userRideRequestId
     };
 
-    var responseNotification = http.post(
+    Map officialNotificationFormat ={
+      "notification":bodyNotification,
+      "data":dataMap,
+      "priority":"high",
+      "to":deviceRegistrationToken
+    };
 
-    )
+    var responseNotification = http.post(
+      Uri.parse("https://fcm.googleapis.com/fcm/send"),
+      headers: headerNotification,
+      body: jsonEncode(officialNotificationFormat),
+
+    );
   }
 
 
