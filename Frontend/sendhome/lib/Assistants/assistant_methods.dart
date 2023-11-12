@@ -95,12 +95,12 @@ class AssistanMethods{
     String destinationAddress = userDropOffAddress;
 
     Map<String,String>headerNotification = {
-      'Content-Type':'aplication/json',
+      'Content-Type':'application/json',
       'Authorization':cloundMessagingServerToken,
     };
 
     Map bodyNotification ={
-      "body":"Destination Addres: \n $destinationAddress.",
+      "body":"Destination Address: \n $destinationAddress.",
       "title":"New Trip Request"
     };
 

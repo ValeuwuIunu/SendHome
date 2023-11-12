@@ -359,7 +359,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
   saveRideRequestInformation(String selectedVehicleType){
     //1.save the rideRequest Information
 
-    referenceRideRequest = FirebaseDatabase.instance.ref().child("All Ride Request").push();
+    referenceRideRequest = FirebaseDatabase.instance.ref().child("All Ride Requests").push();
 
 
     var originLocation = Provider.of<AppInfo>(context,listen: false).userPickUpLocation;
@@ -394,49 +394,49 @@ class _MyMapScreenState extends State<MyMapScreen> {
       if(eventSnap.snapshot.value == null){
         return;
       }
-      if((eventSnap.snapshot.value as Map)["car_details"] !=null){
+      if((eventSnap.snapshot.value as Map)["car_details"] != null){
         setState(() {
           driveCarDetails = (eventSnap.snapshot.value as Map)["car_details"].toString();
         });
       }
-      if((eventSnap.snapshot.value as Map)["driverPhone"] !=null){
+      if((eventSnap.snapshot.value as Map)["driverPhone"] != null){
         setState(() {
           driveCarDetails = (eventSnap.snapshot.value as Map)["driverPhone"].toString();
         });
       }
-      if((eventSnap.snapshot.value as Map)["driverName"] !=null){
+      if((eventSnap.snapshot.value as Map)["driverName"] != null){
         setState(() {
           driveCarDetails = (eventSnap.snapshot.value as Map)["driverName"].toString();
         });
       }
-      if((eventSnap.snapshot.value as Map)["status"] !=null){
+      if((eventSnap.snapshot.value as Map)["status"] != null){
         setState(() {
           userRideRequestStatus = (eventSnap.snapshot.value as Map)["status"].toString();
         });
       }
-      if((eventSnap.snapshot.value as Map)["DriverLocation"]!=null){
+      if((eventSnap.snapshot.value as Map)["driverLocation"] != null){
         double driverCurrentPositionLat = double.parse((eventSnap.snapshot.value as Map)["driverLocation"]["latitude"].toString());
         double driverCurrentPositionLng = double.parse((eventSnap.snapshot.value as Map)["driverLocation"]["longitude"].toString());
 
         LatLng driverCurrentPositionLatLng = LatLng(driverCurrentPositionLat, driverCurrentPositionLng);
 
         //status = accepted
-        if(userRideRequestStatus=="accepted"){
+        if(userRideRequestStatus =="accepted"){
           updateArrivalTimeToUserPickUpLocation(driverCurrentPositionLatLng);
         }
         //status = arrived
-        if(userRideRequestStatus== "arrived"){
+        if(userRideRequestStatus == "arrived"){
           setState(() {
             driverRideStatus = "Driver has arrived";
           });
         }
 
         //status = onTrip
-        if(userRideRequestStatus=="onTrip"){
+        if(userRideRequestStatus =="ontrip"){
           updateReachingTimeToUserDropOffLocation(driverCurrentPositionLatLng);
         }
 
-        if(userRideRequestStatus=="ended"){
+        if(userRideRequestStatus =="ended"){
           if((eventSnap.snapshot.value as Map)["fareAmount"] != null){
             double fareAmount = double.parse((eventSnap.snapshot.value as Map)["fareAmount"].toString());
 
@@ -495,8 +495,11 @@ class _MyMapScreenState extends State<MyMapScreen> {
     print("Driver List: "+ driversList.toString());
 
     for(int i=0;i < driversList.length;i++){
-      if(driversList[i]["car_details"]["Tamaño Camion"] ==selectedVehicleType){
+      if(driversList[i]["car_details"]["Tamaño Camion"] == selectedVehicleType){
         AssistanMethods.sendNotificationToDriverNow(driversList[i]["token"],referenceRideRequest!.key!,context);
+        print(driversList[i]["token"]);
+        print(driversList[i]["car_details"]["Tamaño Camion"]);
+        print("si es");
       }
     }
     
@@ -504,7 +507,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
     showSearchingForDriversContainer();
 
-    await FirebaseDatabase.instance.ref().child("All Ride Request").child(referenceRideRequest!.key!).child("driverId").onValue.listen((eventRideRequestSnapshot) {
+    await FirebaseDatabase.instance.ref().child("All Ride Requests").child(referenceRideRequest!.key!).child("driverId").onValue.listen((eventRideRequestSnapshot) {
 
       print("EventSnapshot: ${eventRideRequestSnapshot.snapshot.value}");
       if(eventRideRequestSnapshot.snapshot.value != null){
@@ -518,7 +521,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
   }
 
   updateArrivalTimeToUserPickUpLocation(driverCurrentPositionLatLng) async{
-    if(requestPositionInfo ==true){
+    if(requestPositionInfo == true){
       requestPositionInfo=false;
       LatLng userPickUpPosition = LatLng(userCurrentPosition!.latitude, userCurrentPosition!.longitude);
 
@@ -936,7 +939,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                       ),
                                       SizedBox(height: 2,),
                                       Text(
-                                      tripdirectionDetailsInfo != null ? "${((AssistanMethods.calculateFareAmountFromOriginToDestination(tripdirectionDetailsInfo!)*0.8)*107).toStringAsFixed(1)}"
+                                      tripdirectionDetailsInfo != null ? "\$ ${((AssistanMethods.calculateFareAmountFromOriginToDestination(tripdirectionDetailsInfo!)*0.8)*107).toStringAsFixed(1)}"
                                       :"null",
                                       style: TextStyle(
                                         color: Colors.grey,
@@ -977,7 +980,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                       ),
                                       SizedBox(height: 2,),
                                       Text(
-                                        tripdirectionDetailsInfo != null ? "${((AssistanMethods.calculateFareAmountFromOriginToDestination(tripdirectionDetailsInfo!)*1.5)*107).toStringAsFixed(1)}"
+                                        tripdirectionDetailsInfo != null ? "\$ ${((AssistanMethods.calculateFareAmountFromOriginToDestination(tripdirectionDetailsInfo!)*1.5)*107).toStringAsFixed(1)}"
                                             :"null",
                                         style: TextStyle(
                                           color: Colors.grey,
@@ -1018,7 +1021,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                       ),
                                       SizedBox(height: 2,),
                                       Text(
-                                        tripdirectionDetailsInfo != null ? "${((AssistanMethods.calculateFareAmountFromOriginToDestination(tripdirectionDetailsInfo!)*2)*107).toStringAsFixed(1)}"
+                                        tripdirectionDetailsInfo != null ? "\$ ${((AssistanMethods.calculateFareAmountFromOriginToDestination(tripdirectionDetailsInfo!)*2)*107).toStringAsFixed(1)}"
                                             :"null",
                                         style: TextStyle(
                                           color: Colors.grey,

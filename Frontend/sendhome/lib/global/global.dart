@@ -9,7 +9,7 @@ User? currentUser;
 UserModel? userModelCurrentInfo;
 
 List driversList = [];
-String cloundMessagingServerToken= "key=AAAAHzrHTd4:APA91bE-wjTAU7PZE9ZYsWQMOC51QhuFIVw0xvVNiuPrZkz_jxNGH8c48V7uFp4CmG0aTyNLK1BRgd8Ly25HLSd2sFK9Oft7X6eJQLtPn97R4rPvI_Om9mY17eI2lZCfA3uBIMnA5vJ1";
+String cloundMessagingServerToken= "key=AAAAHzrHTd4:APA91bFQq04rdAQjSiAZID0t6BxpGS9X5X1SOcM8KrCjybCXlwSWdAb3EUe2AjafHh3ZV9CmS9EvayEk-cV2D_ihaTihNPj5cs8gM7XceVLs8T4VrXdEJVcKFa8v_Fw6xKaDi96AY0wu";
 DirectionDetailsInfo? tripdirectionDetailsInfo;
 String userDropOffAddress="";
 String driveCarDetails="";
