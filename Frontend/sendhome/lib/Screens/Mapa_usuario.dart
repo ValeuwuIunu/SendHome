@@ -91,8 +91,8 @@ class _MyMapScreenState extends State<MyMapScreen> {
     userCurrentPosition = cPosition;
     LatLng latLngPosition = LatLng(userCurrentPosition!.latitude, userCurrentPosition!.longitude);
     CameraPosition cameraPosition = CameraPosition(target: latLngPosition,zoom: 15);
-    
-    
+
+
     newGoogleMapController!.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     String humanRedableAdress = await AssistanMethods.searchAddressForGeographicCoordinate(userCurrentPosition!, context);
     print("This is our addres = " + humanRedableAdress );
@@ -225,9 +225,9 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
     PolylinePoints points = PolylinePoints();
     List<PointLatLng> decodePolyLinePointsResultList = points.decodePolyline(directionDetailsInfo.e_points!);
-    
+
     plineCoordinatedList.clear();
-    
+
     if(decodePolyLinePointsResultList.isNotEmpty){
       decodePolyLinePointsResultList.forEach((PointLatLng pointLatLng) {
         plineCoordinatedList.add(LatLng(pointLatLng.latitude, pointLatLng.longitude));
@@ -269,7 +269,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
     else{
       boundslatlang =LatLngBounds(southwest: originLatLng, northeast: destinationLatLng);
     }
-    
+
     newGoogleMapController!.animateCamera(CameraUpdate.newLatLngBounds(boundslatlang, 65));
 
     Marker originMarker = Marker(
@@ -328,7 +328,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
       bottomPaddingOffMap =400;
     });
   }
-  
+
   /*getAddressFromLatLng()async{
     try{
       GeoData data = await Geocoder2.getDataFromCoordinates(
@@ -479,7 +479,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
         circleSet.clear();
         plineCoordinatedList.clear();
       });
-      
+
       Fluttertoast.showToast(msg: "No online nearest Driver Available");
       Fluttertoast.showToast(msg: "Seacrh Again \n Restarting App");
 
@@ -502,7 +502,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
         print("si es");
       }
     }
-    
+
     Fluttertoast.showToast(msg: "Notification sent Successfully");
 
     showSearchingForDriversContainer();
@@ -544,7 +544,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
     if(requestPositionInfo==true){
       requestPositionInfo=false;
-      
+
       var dropOffLocation=Provider.of<AppInfo>(context,listen:false).userDropOffLocation;
 
       LatLng userDestinationPosition = LatLng(
@@ -898,18 +898,21 @@ class _MyMapScreenState extends State<MyMapScreen> {
                           ],
                         ),
                         SizedBox(height: 20,),
-                        Text("SUGGESTED RIDES",
+                        Text("Escoja un tamaño de camión",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
 
+
                         SizedBox(height: 20,),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
 
-                        Row(
 
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
                             GestureDetector(
                               onTap: (){
                                 setState(() {
@@ -928,7 +931,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                       Image.asset('assets/Pequeño.jpg',scale: 2,),
 
 
-                                      SizedBox(height: 8,),
+                                      SizedBox(height: 4,width: 2,),
 
                                       Text(
                                           "X",
@@ -969,7 +972,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                       Image.asset('assets/Mediano.jpg',scale: 2,),
 
 
-                                      SizedBox(height: 8,),
+                                      SizedBox(height: 4,),
 
                                       Text(
                                         "XL",
@@ -1010,7 +1013,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                       Image.asset('assets/Grande.jpg',scale: 2,),
 
 
-                                      SizedBox(height: 8,),
+                                      SizedBox(height: 4,),
 
                                       Text(
                                         "XXL",
@@ -1033,8 +1036,9 @@ class _MyMapScreenState extends State<MyMapScreen> {
                               ),
                             )
                           ],
+                ),
                         ),
-                        SizedBox(height: 20,),
+                SizedBox(height: 20,),
 
                         Expanded(
                             child: GestureDetector(
@@ -1042,7 +1046,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                 if(selectedVehicleType!=""){
                                   saveRideRequestInformation(selectedVehicleType);
                                 }else{
-                                  Fluttertoast.showToast(msg: "Please select a vehicle from \n suggested rides.");
+                                  Fluttertoast.showToast(msg: "Por favor escoge un tamaño \n de camión deseado.");
                                 }
                               },
                               child:Container(
@@ -1053,7 +1057,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                                 ) ,
                                 child: Center(
                                   child: Text(
-                                    "Request a Ride",
+                                    "Solicitar camión",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
@@ -1096,7 +1100,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
                         Center(
                           child: Text(
-                            "Searching for a driver ...",
+                            "Buscando por un camión...",
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 22,
@@ -1132,7 +1136,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                         Container(
                           width: double.infinity,
                           child: Text(
-                            "Cancel",
+                            "Cancelar",
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.red,fontSize: 15,fontWeight: FontWeight.bold),
                           ),
@@ -1147,7 +1151,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                 ),
               ),
             );
-           
+
 
            /* Positioned(
               top: 40,
