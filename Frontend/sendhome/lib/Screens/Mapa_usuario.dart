@@ -14,6 +14,7 @@ import 'package:sendhome/Assistants/assistant_methods.dart';
 import 'package:sendhome/Assistants/geofire_assistant.dart';
 import 'package:sendhome/Screens/drawer_Screen.dart';
 import 'package:sendhome/Screens/precise_pickup_location.dart';
+import 'package:sendhome/Screens/rate_driver_screen.dart';
 import 'package:sendhome/Screens/search_place_screen.dart';
 import 'package:sendhome/global/global.dart';
 import 'package:sendhome/global/map_key.dart';
@@ -415,9 +416,9 @@ class _MyMapScreenState extends State<MyMapScreen> {
           driveName = (eventSnap.snapshot.value as Map)["driverName"].toString();
         });
       }
-      if((eventSnap.snapshot.value as Map)["ratings"] != null){
+      if((eventSnap.snapshot.value as Map)["raitings"] != null){
         setState(() {
-          driveRatings = (eventSnap.snapshot.value as Map)["ratings"].toString();
+          driveRatings = (eventSnap.snapshot.value as Map)["raitings"].toString();
         });
       }
       if((eventSnap.snapshot.value as Map)["status"] != null){
@@ -462,7 +463,9 @@ class _MyMapScreenState extends State<MyMapScreen> {
               //user can rate the driver now
               if((eventSnap.snapshot.value as Map)["driverId"] !=null){
                 String assignedDriverId=(eventSnap.snapshot as Map)["driverId"].toString();
-                //Navigator.push(context, MaterialPageRoute(builder: (c)=>RateDriverScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (c)=>RateDriverScreen(
+                  assignedDriverId :assignedDriverId,
+                )));
 
                 referenceRideRequest!.onDisconnect();
                 tripRidesRequestInfoStreamSubscription!.cancel();
@@ -1201,7 +1204,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
                               SizedBox(width: 5,),
 
-                              Text("4.5",
+                              Text(driveRatings,
                               style:TextStyle(
                                 color: Colors.grey
                               )

@@ -73,6 +73,7 @@ class _PayFareAmountDialogState extends State<PayFareAmountDialog> {
                   primary: Colors.white,
                 ),
                 onPressed: (){
+                  print("Exsitp");
                   Future.delayed(Duration(milliseconds: 10000),(){
                     Navigator.pop(context,"Cash Paid");
                     Navigator.push(context,MaterialPageRoute(builder: (c)=> SplashScreen()));
