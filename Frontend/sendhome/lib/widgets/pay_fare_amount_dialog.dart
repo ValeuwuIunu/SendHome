@@ -28,7 +28,9 @@ class _PayFareAmountDialogState extends State<PayFareAmountDialog> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
+            SizedBox(height: 20,),
             Text("Fare Amount".toUpperCase(),
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -36,6 +38,8 @@ class _PayFareAmountDialogState extends State<PayFareAmountDialog> {
               fontSize: 16,
             ),
             ),
+            SizedBox(height: 10,),
+            Divider(thickness: 1,color: Colors.grey[300],),
             SizedBox(height: 10,),
             
             Text(
@@ -69,7 +73,7 @@ class _PayFareAmountDialogState extends State<PayFareAmountDialog> {
                   primary: Colors.white,
                 ),
                 onPressed: (){
-                  Future.delayed(Duration(milliseconds: 100000),(){
+                  Future.delayed(Duration(milliseconds: 10000),(){
                     Navigator.pop(context,"Cash Paid");
                     Navigator.push(context,MaterialPageRoute(builder: (c)=> SplashScreen()));
                   });

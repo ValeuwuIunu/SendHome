@@ -21,10 +21,20 @@ import 'package:sendhome/infoHadler/app_info.dart';
 import 'package:sendhome/models/active_nearby_available_drivers.dart';
 import 'package:sendhome/splashScreen/splash_screen.dart';
 import 'package:sendhome/widgets/progres_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/directions.dart';
 import '../widgets/pay_fare_amount_dialog.dart';
-
+Future<void> _makePhoneCall(String url) async{
+  
+  if(await canLaunch(url)){
+    await launch(url);
+  }
+  else{
+    throw"Could not launch $url";
+  }
+  
+}
 
 class MyMapScreen extends StatefulWidget {
   const MyMapScreen({Key? key}) : super(key: key);
@@ -192,11 +202,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
   createdactiveNearByDriverIconMarker(BuildContext context) {
     if (activeNearbyIcon == null) {
-      ImageConfiguration imageConfiguration = createLocalImageConfiguration(
-        context,
-        size: Size(2, 2), // Ajusta el tamaño de la imagen según tus necesidades
-      );
-
+      ImageConfiguration imageConfiguration = createLocalImageConfiguration(context, size: Size(2, 2),);
       BitmapDescriptor.fromAssetImage(imageConfiguration, 'assets/Imagen2.png').then((value) {
         activeNearbyIcon = value;
       });
@@ -401,12 +407,17 @@ class _MyMapScreenState extends State<MyMapScreen> {
       }
       if((eventSnap.snapshot.value as Map)["driverPhone"] != null){
         setState(() {
-          driveCarDetails = (eventSnap.snapshot.value as Map)["driverPhone"].toString();
+          drivePhone = (eventSnap.snapshot.value as Map)["driverPhone"].toString();
         });
       }
       if((eventSnap.snapshot.value as Map)["driverName"] != null){
         setState(() {
-          driveCarDetails = (eventSnap.snapshot.value as Map)["driverName"].toString();
+          driveName = (eventSnap.snapshot.value as Map)["driverName"].toString();
+        });
+      }
+      if((eventSnap.snapshot.value as Map)["ratings"] != null){
+        setState(() {
+          driveRatings = (eventSnap.snapshot.value as Map)["ratings"].toString();
         });
       }
       if((eventSnap.snapshot.value as Map)["status"] != null){
@@ -534,7 +545,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
         return;
       }
       setState(() {
-        driverRideStatus = "Driver is coming" +directionDetailsInfo.distance_text.toString();
+        driverRideStatus = "Driver is coming: " +directionDetailsInfo.distance_text.toString();
       });
       requestPositionInfo=true;
     }
@@ -562,7 +573,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
       }
 
       setState(() {
-        driverRideStatus= "Going Towards Destination" + directionDetailsInfo.duration_text.toString();
+        driverRideStatus= "Going Towards Destination: " + directionDetailsInfo.duration_text.toString();
       });
 
       requestPositionInfo=true;
@@ -605,7 +616,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    createdactiveNearByDriverIconMarker(context);
+    //createdactiveNearByDriverIconMarker(context);
     return GestureDetector(
       onTap:(){
         FocusScope.of(context).unfocus();
@@ -1100,7 +1111,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
                         Center(
                           child: Text(
-                            "Buscando por un camión...",
+                            "Buscando un conductor...",
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 22,
@@ -1145,15 +1156,92 @@ class _MyMapScreenState extends State<MyMapScreen> {
                     ),
                   ),
                 )
-            )
+            ),
 
+      //Ui for displaying assigned driver information
+      Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+          height: assigneddriverInfoContainerHeight,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10)
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: Column(
+              children: [
+                Text(driverRideStatus,style: TextStyle(fontWeight:FontWeight.bold),),
+                SizedBox(height: 5,),
+                Divider(thickness: 1,color: Colors.grey[300],),
+                SizedBox(height: 5,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color : Colors.deepPurpleAccent,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(Icons.person ,color: Colors.white),
+                        ),
+                        SizedBox(width: 10,),
+
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(driveName,style: TextStyle(fontWeight: FontWeight.bold),),
+                            Row(children: [
+                              Icon(Icons.star,color: Colors.orange,),
+
+                              SizedBox(width: 5,),
+
+                              Text("4.5",
+                              style:TextStyle(
+                                color: Colors.grey
+                              )
+                              )
+                            ],)
+                          ],
+                        )
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Image.asset('assets/Mediano.jpg', scale:3),
+                        Text(driveCarDetails,style: TextStyle(fontSize: 12),),
+                      ],
+                    )
                   ],
                 ),
-              ),
-            );
+
+                SizedBox(height: 5,),
+                Divider(thickness: 1,color:Colors.grey[300]),
+                ElevatedButton.icon(
+                    onPressed: (){
+                      _makePhoneCall("tel: ${drivePhone}");
+                    },
+                    style: ElevatedButton.styleFrom(primary: Colors.deepPurpleAccent),
+                    icon: Icon(Icons.phone),
+                    label:Text("Call Driver")
+                )
+
+              ],
+            ),
+          )
+      )
+
+      )
 
 
-           /* Positioned(
+/* Positioned(
               top: 40,
               right: 20,
               left: 20,
@@ -1174,6 +1262,9 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
 
 
-
+          ],
+        ),
+      ),
+    );
   }
 }
