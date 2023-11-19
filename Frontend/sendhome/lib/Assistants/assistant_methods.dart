@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:sendhome/Assistants/request_assistant.dart';
 import 'package:sendhome/global/global.dart';
 import 'package:sendhome/models/directions.dart';
+import 'package:sendhome/models/trip_history_model.dart';
 import 'package:sendhome/models/user_model.dart';
 import 'package:http/http.dart' as http;
 import '../global/map_key.dart';
@@ -124,7 +125,58 @@ class AssistanMethods{
       body: jsonEncode(officialNotificationFormat),
 
     );
+
+
+
+
+  }
+  static void readTripKeysForOnlineUser(context){
+FirebaseDatabase.instance.ref().child("All Ride Requests").orderByChild("userName").equalTo(userModelCurrentInfo!.nombre).once().then((snap) {
+
+  if(snap.snapshot.value != null){
+    Map KeysTripsId  =snap.snapshot.value as Map;
+
+    //count total number of trips and share it with provider
+    int overAllTripsCounter = KeysTripsId.length;
+    Provider.of<AppInfo>(context,listen: false).updateOverAllTripsCounter(overAllTripsCounter);
+
+    //sharew trips keys with provider
+    List<String> tripKeysList  = [];
+
+    KeysTripsId.forEach((key, value) {
+
+      tripKeysList.add(key);
+    });
+    Provider.of<AppInfo>(context,listen:false).updateOverAllTripsKeys(tripKeysList);
+
+
+    readTripHistoryInformation(context);
+
   }
 
+
+});
+  }
+
+
+  static void readTripHistoryInformation(context){
+    var tripAllKeys = Provider.of<AppInfo>(context,listen: false).historyTripsKeysList;
+    
+    for(String eachKey in tripAllKeys){
+      FirebaseDatabase.instance.ref()
+          .child("All Ride Requests")
+          .child(eachKey)
+          .once()
+          .then((snap){
+
+        var eachTripHistory = TripsHistoryModel.fromSanpshot(snap.snapshot);
+
+        if((snap.snapshot.value as Map)["status"] == "ended"){
+          //update or add each history to OverAllTrips History dat list
+        Provider.of<AppInfo>(context,listen: false).updateOverAllTripHistoryInformation(eachTripHistory);
+        }
+      });
+    }
+  }
 
 }

@@ -111,7 +111,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
     userName=userModelCurrentInfo!.nombre!;
     userEmail=userModelCurrentInfo!.correo!;
     initializeGeoFireListener();
-    //AssistanMethods.readTripsKeysForOnlinerUser(context);
+    AssistanMethods.readTripKeysForOnlineUser(context);
 
   }
   initializeGeoFireListener(){
@@ -126,6 +126,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
               //whenever any driver active / online
               case Geofire.onKeyEntered:
+                GeofireAssistant.activeNearByAvailableDriverList.clear();
                    ActiveNearByAvailableDrivers activeNearByAvailableDrivers = ActiveNearByAvailableDrivers();
                    activeNearByAvailableDrivers.locationLatitude=map["latitude"];
                    activeNearByAvailableDrivers.locationLongitude=map["longitude"];
@@ -458,13 +459,17 @@ class _MyMapScreenState extends State<MyMapScreen> {
                   fareAmount:fareAmount,
                 )
             );
-
+            print(response);
             if(response == "Cash Paid"){
+              print("1-Cash Paid");
               //user can rate the driver now
-              if((eventSnap.snapshot.value as Map)["driverId"] !=null){
-                String assignedDriverId=(eventSnap.snapshot as Map)["driverId"].toString();
+              if((eventSnap.snapshot.value as Map)["driverId"] != null){
+                String v = (eventSnap.snapshot.value as Map)["driverId"];
+                print(v);
+                print("Type of snapshot.value: ${eventSnap.snapshot.value.runtimeType}");
+                //String assignedDriverId = (eventSnap.snapshot as Map)["driverId"];
                 Navigator.push(context, MaterialPageRoute(builder: (c)=>RateDriverScreen(
-                  assignedDriverId :assignedDriverId,
+                  assignedDriverId :v,
                 )));
 
                 referenceRideRequest!.onDisconnect();
@@ -619,7 +624,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //createdactiveNearByDriverIconMarker(context);
+    createdactiveNearByDriverIconMarker(context);
     return GestureDetector(
       onTap:(){
         FocusScope.of(context).unfocus();

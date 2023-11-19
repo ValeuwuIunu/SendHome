@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sendhome/Screens/profile_screen.dart';
+import 'package:sendhome/Screens/trips_history_screen.dart';
 import 'package:sendhome/global/global.dart';
 import 'package:sendhome/splashScreen/splash_screen.dart';
 
@@ -60,8 +61,12 @@ class DrawerScreen extends StatelessWidget {
 
                     SizedBox(height: 30,),
 
-                    Text("Tus viajes",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),),
-
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (c)=>TripHistoryScreen()));
+                      },
+                      child: Text("Tus viajes",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),),
+                    ),
                     SizedBox(height: 30,),
 
                     Text("Pagos",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),),
