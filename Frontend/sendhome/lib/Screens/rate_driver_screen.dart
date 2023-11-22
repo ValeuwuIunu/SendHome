@@ -35,7 +35,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
             SizedBox(height: 22,),
 
             Text(
-              "Rate Trip Experience",
+              "Califica tu experiencia",
               style: TextStyle(
                 fontSize: 22,
                 letterSpacing: 2,
@@ -59,27 +59,27 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
 
                 if(countRatingStars ==1){
                   setState(() {
-                    titleStarsRating="Very Bad";
+                    titleStarsRating="Muy mala";
                   });
                 }
                 if(countRatingStars ==2){
                   setState(() {
-                    titleStarsRating="Bad";
+                    titleStarsRating="Mala";
                   });
                 }
                 if(countRatingStars ==3){
                   setState(() {
-                    titleStarsRating="Good";
+                    titleStarsRating="Buena";
                   });
                 }
                 if(countRatingStars ==4){
                   setState(() {
-                    titleStarsRating="Very Good";
+                    titleStarsRating="Muy buena";
                   });
                 }
                 if(countRatingStars ==5){
                   setState(() {
-                    titleStarsRating="Exellent";
+                    titleStarsRating="Excelente";
                   });
                 }
               },
@@ -116,7 +116,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                   Navigator.pop(context);
                   Navigator.push(context, MaterialPageRoute(builder: (c) => SplashScreen()));
                 }
-                Fluttertoast.showToast(msg: "Restarting the app now");
+                Fluttertoast.showToast(msg: "Volviendo al inicio");
               });
             },
               style: ElevatedButton.styleFrom(

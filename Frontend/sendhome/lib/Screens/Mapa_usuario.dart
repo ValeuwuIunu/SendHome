@@ -1093,7 +1093,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                   ),
                 )
             ),
-
+//desde acá
             //Requesting a ride
             Positioned(
               bottom: 0,
@@ -1238,7 +1238,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
                     },
                     style: ElevatedButton.styleFrom(primary: Colors.deepPurpleAccent),
                     icon: Icon(Icons.phone),
-                    label:Text("Call Driver")
+                    label:Text("Llamar al conductor")
                 )
 
               ],

@@ -18,7 +18,7 @@ class _TripHistoryScreenState extends State<TripHistoryScreen> {
       appBar: AppBar(
         backgroundColor:Colors.white,
         title: Text(
-          "Trips History",
+          "Historial de acarreos",
           style: TextStyle(
             color: Colors.black,
           ),
